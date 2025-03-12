@@ -47,14 +47,44 @@ BOOST_AUTO_TEST_CASE(Constructor_with_two_parameters)
 	CheckingRationalNumber(CRational(5, 1), 5, 1);
 	CheckingRationalNumber(CRational(5, -1), -5, 1); // знаменатель положительный, числитель может быть отрицательным
 	CheckingRationalNumber(CRational(-5, -1), 5, 1);
-	CheckingRationalNumber(CRational(6, 8), 5, 1);
-	CheckingRationalNumber(CRational(6, -8), 5, 1);
+	CheckingRationalNumber(CRational(6, 8), 3, 4);
+	CheckingRationalNumber(CRational(6, -8), -3, 4);
+	CheckingRationalNumber(CRational(-6, 8), -3, 4);
+	CheckingRationalNumber(CRational(-6, -8), 3, 4);
+	CheckingRationalNumber(CRational(-10, 20), -1, 2);
 }
-// Знаменатель равен 0 - выброшено исключение
+// Знаменатель равен 0 - должно быть выброшено исключение
 BOOST_AUTO_TEST_CASE(Denominator_is_0)
 {
 	BOOST_REQUIRE_THROW(CRational(1, 0), std::invalid_argument);
 	BOOST_REQUIRE_THROW(CRational(-1, 0), std::invalid_argument);
 	BOOST_REQUIRE_THROW(CRational(0, 0), std::invalid_argument);
+}
+// Реализация метода ToDouble() - Возвращает отношение числителя и знаменателя в виде числа double
+BOOST_AUTO_TEST_CASE(Implementation_of_the_ToDouble_method)
+{
+	BOOST_CHECK_EQUAL(CRational(3, 5).ToDouble(), 0.6);
+	BOOST_CHECK_EQUAL(CRational(10, 4).ToDouble(), 2.5);
+	BOOST_CHECK_EQUAL(CRational(-3, 4).ToDouble(), -0.75);
+	BOOST_CHECK_EQUAL(CRational(-10, -4).ToDouble(), 2.5);
+	BOOST_CHECK_EQUAL(CRational(0, 10).ToDouble(), 0.0);
+	BOOST_CHECK_EQUAL(CRational(7, 7).ToDouble(), 1.0);
+	BOOST_REQUIRE_THROW(CRational(10, 0).ToDouble(), std::invalid_argument);
+}
+// Реализация унарного плюса и унарного минуса
+// Унарный минус возвращает раицональное число с противоположным знаком
+// Унарный плюс возвращает рациональное число, равное текущему
+BOOST_AUTO_TEST_CASE(Implementatio_of_unary_minus)
+{
+	CheckingRationalNumber(-CRational(2, 3), -2, 3);
+	CheckingRationalNumber(-CRational(-2, 3), 2, 3);
+	CheckingRationalNumber(-CRational(-2, -3), -2, 3);
+}
+BOOST_AUTO_TEST_CASE(Implementatio_of_unary_plus)
+{
+	CheckingRationalNumber(+CRational(2, 3), 2, 3);
+	CheckingRationalNumber(+CRational(-2, 3), -2, 3);
+	CheckingRationalNumber(+CRational(-2, -3), 2, 3);
+	CheckingRationalNumber(+CRational(2, -3), -2, 3);
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -27,6 +27,9 @@ public:
     double ToDouble()const;
 
     // Прочие операторы согласно заданию
+	CRational const operator-() const;
+	CRational const operator+() const;
+
 private:
     int m_numerator;
     int m_denominator;

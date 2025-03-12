@@ -52,3 +52,19 @@ int GCD(int a, int b)
 	}
 	return (a != 0) ? a : 1; 
 }
+
+
+double CRational::ToDouble() const
+{
+	return static_cast<double>(m_numerator) / m_denominator;
+}
+
+CRational const CRational::operator-() const
+{
+	return CRational(-m_numerator, m_denominator);
+}
+
+CRational const CRational::operator+() const
+{
+	return CRational(m_numerator, m_denominator);
+}
