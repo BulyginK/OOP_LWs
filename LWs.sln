@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GeometricShapes", "GeometricShapes\GeometricShapes.vcxproj", "{D1B32281-A81D-45FF-8284-EBAB4D874D87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW4_GeometricShapes", "GeometricShapes\GeometricShapes.vcxproj", "{D1B32281-A81D-45FF-8284-EBAB4D874D87}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GeometricShapes_TEST", "GeometricShapes_TEST\GeometricShapes_TEST.vcxproj", "{6397DEE6-6F00-4C8E-A144-A0D9EFBDB428}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW4_GeometricShapes_TEST", "GeometricShapes_TEST\GeometricShapes_TEST.vcxproj", "{6397DEE6-6F00-4C8E-A144-A0D9EFBDB428}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW5_RationalNumbers", "RationalNumbers\RationalNumbers.vcxproj", "{ABB461E4-56E1-4356-A49C-AAD88DA916AD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW5_RationalNumbers_TEST", "RationalNumbers_TEST\LW5_RationalNumbers_TEST.vcxproj", "{674988CD-BF70-49B9-8DB6-13E17A057DB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,30 @@ Global
 		{6397DEE6-6F00-4C8E-A144-A0D9EFBDB428}.Release|x64.Build.0 = Release|x64
 		{6397DEE6-6F00-4C8E-A144-A0D9EFBDB428}.Release|x86.ActiveCfg = Release|Win32
 		{6397DEE6-6F00-4C8E-A144-A0D9EFBDB428}.Release|x86.Build.0 = Release|Win32
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Debug|ARM64.ActiveCfg = Debug|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Debug|ARM64.Build.0 = Debug|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Debug|x64.ActiveCfg = Debug|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Debug|x64.Build.0 = Debug|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Debug|x86.ActiveCfg = Debug|Win32
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Debug|x86.Build.0 = Debug|Win32
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Release|ARM64.ActiveCfg = Release|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Release|ARM64.Build.0 = Release|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Release|x64.ActiveCfg = Release|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Release|x64.Build.0 = Release|x64
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Release|x86.ActiveCfg = Release|Win32
+		{ABB461E4-56E1-4356-A49C-AAD88DA916AD}.Release|x86.Build.0 = Release|Win32
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Debug|ARM64.ActiveCfg = Debug|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Debug|ARM64.Build.0 = Debug|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Debug|x64.ActiveCfg = Debug|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Debug|x64.Build.0 = Debug|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Debug|x86.ActiveCfg = Debug|Win32
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Debug|x86.Build.0 = Debug|Win32
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Release|ARM64.ActiveCfg = Release|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Release|ARM64.Build.0 = Release|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Release|x64.ActiveCfg = Release|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Release|x64.Build.0 = Release|x64
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Release|x86.ActiveCfg = Release|Win32
+		{674988CD-BF70-49B9-8DB6-13E17A057DB1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
