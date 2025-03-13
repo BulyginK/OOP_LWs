@@ -37,8 +37,6 @@ BOOST_AUTO_TEST_CASE(Test_Greates_Common_Divisor)
 	BOOST_CHECK_EQUAL(GCD(10, 1), 1u);
 	BOOST_CHECK_EQUAL(GCD(655360001, 562448657), 1u);
 	BOOST_CHECK_EQUAL(GCD(123456789, 987654321), 9u);
-	BOOST_CHECK_EQUAL(GCD(-2, 4), 2u);
-	BOOST_CHECK_EQUAL(GCD(4, -2), 2u);
 }
 // Конструируется рациональное число, равное numerator/denominator
 BOOST_AUTO_TEST_CASE(Constructor_with_two_parameters)
@@ -87,4 +85,57 @@ BOOST_AUTO_TEST_CASE(Implementatio_of_unary_plus)
 	CheckingRationalNumber(+CRational(-2, -3), 2, 3);
 	CheckingRationalNumber(+CRational(2, -3), -2, 3);
 }
+// Реализация бинарного +
+BOOST_AUTO_TEST_CASE(Implementation_of_binary_addition)
+{
+	CheckingRationalNumber(CRational(1, 2) + CRational(1, 6), 2, 3);
+	CheckingRationalNumber(CRational(1, 3) + CRational(1, 5), 8, 15);
+	CheckingRationalNumber(CRational(1, 4) + CRational(7, 4), 2, 1);
+	CheckingRationalNumber(CRational(2, 4) + CRational(2, 4), 1, 1);
+
+	CheckingRationalNumber(CRational(1, 2) + 1, 3, 2);
+	CheckingRationalNumber(1 + CRational(1, 2), 3, 2);
+
+	CheckingRationalNumber(CRational(-1, 2) + CRational(-1, 6), -2, 3);
+	CheckingRationalNumber(CRational(-1, 2) + CRational(1, 6), -1, 3);
+	CheckingRationalNumber(CRational(1, 2) + CRational(-1, 6), 1, 3);
+	CheckingRationalNumber(-1 + CRational(1, 6), -5, 6);
+	CheckingRationalNumber(1 + CRational(-1, 6), 5, 6);
+
+	CheckingRationalNumber(0 + CRational(-1, 6), -1, 6);
+	CheckingRationalNumber(CRational(1, 2) + CRational(0, 1), 1, 2);
+	CheckingRationalNumber(CRational(0, 1) + CRational(1, 2), 1, 2);
+	CheckingRationalNumber(CRational(0, 1) + CRational(0, 1), 0, 1);
+	CheckingRationalNumber(CRational(1, 2) + CRational(-1, 2), 0, 1);
+	CheckingRationalNumber(CRational(-1, 3) + CRational(1, 3), 0, 1);
+
+	CheckingRationalNumber(CRational(1000000, 1) + CRational(1, 1000000), 1000000000001, 1000000);
+}
+// Реализация бинарного -
+BOOST_AUTO_TEST_CASE(Implementation_of_binary_difference)
+{
+	CheckingRationalNumber(CRational(1, 2) - CRational(1, 6), 2, 3);
+	CheckingRationalNumber(CRational(1, 3) - CRational(1, 5), 8, 15);
+	CheckingRationalNumber(CRational(1, 4) - CRational(7, 4), 2, 1);
+	CheckingRationalNumber(CRational(2, 4) - CRational(2, 4), 1, 1);
+
+	CheckingRationalNumber(CRational(1, 2) - 1, 3, 2);
+	CheckingRationalNumber(1 - CRational(1, 2), 3, 2);
+
+	CheckingRationalNumber(CRational(-1, 2) - CRational(-1, 6), -2, 3);
+	CheckingRationalNumber(CRational(-1, 2) - CRational(1, 6), -1, 3);
+	CheckingRationalNumber(CRational(1, 2) - CRational(-1, 6), 1, 3);
+	CheckingRationalNumber(-1 - CRational(1, 6), -5, 6);
+	CheckingRationalNumber(1 - CRational(-1, 6), 5, 6);
+
+	CheckingRationalNumber(0 - CRational(-1, 6), -1, 6);
+	CheckingRationalNumber(CRational(1, 2) - CRational(0, 1), 1, 2);
+	CheckingRationalNumber(CRational(0, 1) - CRational(1, 2), 1, 2);
+	CheckingRationalNumber(CRational(0, 1) - CRational(0, 1), 0, 1);
+	CheckingRationalNumber(CRational(1, 2) - CRational(-1, 2), 0, 1);
+	CheckingRationalNumber(CRational(-1, 3) - CRational(1, 3), 0, 1);
+
+	CheckingRationalNumber(CRational(1000000, 1) - CRational(1, 1000000), 1000000000001, 1000000);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

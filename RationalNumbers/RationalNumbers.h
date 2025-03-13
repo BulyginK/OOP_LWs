@@ -24,7 +24,7 @@ public:
     int GetDenominator() const;
 
     // Возвращает отношение числителя и знаменателя в виде числа double
-    double ToDouble()const;
+    double ToDouble() const;
 
     // Прочие операторы согласно заданию
 	CRational const operator-() const;
@@ -37,4 +37,10 @@ private:
     void Normalization();
 };
 
-int GCD(int a, int b);
+unsigned GCD(unsigned a, unsigned b);
+unsigned LCM(unsigned a, unsigned b);
+
+CRational const operator+(const CRational& lhs, const CRational& rhs);
+CRational const operator-(const CRational& lhs, const CRational& rhs);
+//lhs — сокращение от Left Hand Side(левая сторона).
+//rhs — сокращение от Right Hand Side (правая сторона).
