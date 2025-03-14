@@ -13,8 +13,6 @@ public:
 	CRational const operator-() const;
 	CRational const operator+() const;
 
-	//CRational const operator-(const CRational& rhs);
-
 private:
 	int m_num = 0;
 	int m_denom = 1;
