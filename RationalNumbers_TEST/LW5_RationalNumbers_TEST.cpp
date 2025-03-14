@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(Implementation_of_printed_to_ostream)
 	}
 }
 // Реализация ввода рационального числа из входного потока
-void CheckInputRationalNumber(const std::string& str, boost::optional<CRational> expectedResult)
+void CheckInputRationalNumber(const std::string& str, boost::optional<CRational> expectedResult) // использовать стандартную библеотеку
 {
 	std::istringstream input(str);
 	CRational rat;
