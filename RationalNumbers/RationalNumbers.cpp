@@ -2,44 +2,44 @@
 #include <utility>
 #include <stdexcept>
 
-CRational::CRational(int num, int denom)
-	: m_num(num)
-	, m_denom(denom)
-{
-	if (denom == 0)
-	{
-		throw std::invalid_argument("Denominator cannot be 0");
-	}
-	if (denom < 0)
-	{
-		m_num = -m_num;
-		m_denom = -m_denom;
-	}
-	Normalization();
-};
-
 int CRational::GetNumerator() const
 {
-	return m_num;
+	return m_numerator;
 }
 
 int CRational::GetDenominator() const
 {
-	return m_denom;
+	return m_denominator;
 }
 
+CRational::CRational() : m_numerator(0), m_denominator(1) {};
+
+CRational::CRational(int value) : m_numerator(value), m_denominator(1) {};
+
+CRational::CRational(int numerator, int denominator)
+	: m_numerator(numerator)
+	, m_denominator(denominator)
+{
+	if (denominator == 0)
+	{
+		throw std::invalid_argument("Denominator cannot be 0");
+	}
+	if (denominator < 0) // если знаменатель отрицателен - знак перемещают в числитель
+	{
+		m_numerator = -m_numerator;
+		m_denominator = -m_denominator;
+	}
+	Normalization();
+};
 
 void CRational::Normalization()
 {
-	const int gcd = GCD(abs(m_num), m_denom);
-	if (gcd != 0) {
-		m_num /= gcd;
-		m_denom /= gcd;
-	}
+	const int gcd = GCD(abs(m_numerator), m_denominator);
+	m_numerator /= gcd;
+	m_denominator /= gcd;
 };
 
-// Greates_Common_Divisor - НОД по алгоритму Евклида
-unsigned GCD(unsigned a, unsigned b) 
+unsigned GCD(unsigned a, unsigned b) // Greates_Common_Divisor - НОД по алгоритму Евклида
 {
 	while (b != 0)
 	{
@@ -49,20 +49,19 @@ unsigned GCD(unsigned a, unsigned b)
 	return (a != 0) ? a : 1;
 }
 
-// Least_Common_Multiple - НОК через НОД
-unsigned LCM(unsigned a, unsigned b) 
+unsigned LCM(unsigned a, unsigned b) // Least_Common_Multiple - НОК через НОД
 {
 	return (a * b) / GCD(a, b);
 }
 
 double CRational::ToDouble() const
 {
-	return static_cast<double>(m_num) / m_denom;
+	return static_cast<double>(m_numerator) / m_denominator;
 }
 
 CRational const CRational::operator-() const
 {
-	return CRational(-m_num, m_denom);
+	return CRational(-m_numerator, m_denominator);
 }
 
 CRational const CRational::operator+() const
@@ -86,23 +85,10 @@ CRational const operator-(const CRational& lhs, const CRational& rhs)
 	return CRational(numerator, lcm);
 }
 
-
-//CRational::CRational() : m_numerator(0), m_denominator(1) {};
-//
-//CRational::CRational(int value) : m_numerator(value), m_denominator(1) {};
-//
-//CRational::CRational(int numerator, int denominator)
-//	: m_numerator(numerator)
-//	, m_denominator(denominator)
+//CRational const CRational::operator-(const CRational& rhs)
 //{
-//	if (denominator == 0)
-//	{
-//		throw std::invalid_argument("Denominator cannot be 0");
-//	}
-//	if (denominator < 0) // если знаменатель отрицателен - знак перемещают в числитель
-//	{
-//		m_numerator = -m_numerator;
-//		m_denominator = -m_denominator;
-//	}
-//	Normalization();
-//};
+//	int lcm = LCM(m_numerator, rhs.GetDenominator());
+//	int numerator = m_numerator * lcm / m_numerator
+//		+ rhs.GetNumerator() * lcm / rhs.GetDenominator();
+//	return CRational(numerator, lcm);
+//}
