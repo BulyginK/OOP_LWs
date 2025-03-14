@@ -35,10 +35,8 @@ CRational::CRational(int numerator, int denominator)
 void CRational::Normalization()
 {
 	const int gcd = GCD(abs(m_numerator), m_denominator);
-	if (gcd != 0) {
-		m_numerator /= gcd;
-		m_denominator /= gcd;
-	}
+	m_numerator /= gcd;
+	m_denominator /= gcd;
 };
 
 unsigned GCD(unsigned a, unsigned b) // Greates_Common_Divisor - НОД по алгоритму Евклида
@@ -86,3 +84,11 @@ CRational const operator-(const CRational& lhs, const CRational& rhs)
 					- rhs.GetNumerator() * lcm / rhs.GetDenominator();
 	return CRational(numerator, lcm);
 }
+
+//CRational const CRational::operator-(const CRational& rhs)
+//{
+//	int lcm = LCM(m_numerator, rhs.GetDenominator());
+//	int numerator = m_numerator * lcm / m_numerator
+//		+ rhs.GetNumerator() * lcm / rhs.GetDenominator();
+//	return CRational(numerator, lcm);
+//}
