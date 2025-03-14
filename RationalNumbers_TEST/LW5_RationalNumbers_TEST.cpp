@@ -302,6 +302,7 @@ BOOST_AUTO_TEST_CASE(Implementation_of_converted_to_compound_fraction)
 	CheckCompoundFraction(CRational(-9, 4), -2, -1, 4);
 	CheckCompoundFraction(CRational(-9), -9, 0, 1);
 	CheckCompoundFraction(CRational(1, 2), 0, 1, 2);
+	CheckCompoundFraction(CRational(), 0, 0, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
