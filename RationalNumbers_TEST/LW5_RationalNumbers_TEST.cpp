@@ -2,10 +2,10 @@
 #include "../RationalNumbers/RationalNumbers.h"
 #include <boost/optional.hpp>
 
-void CheckingRationalNumber(const CRational& rational, int expectedNumerator, int expectedDenominator)
+void CheckingRationalNumber(const CRational& rat, int expectedNumerator, int expectedDenominator)
 {
-	BOOST_CHECK_EQUAL(rational.GetNumerator(), expectedNumerator);
-	BOOST_CHECK_EQUAL(rational.GetDenominator(), expectedDenominator);
+	BOOST_CHECK_EQUAL(rat.GetNumerator(), expectedNumerator);
+	BOOST_CHECK_EQUAL(rat.GetDenominator(), expectedDenominator);
 }
 
 BOOST_AUTO_TEST_SUITE(Checking_the_created_rational_number)

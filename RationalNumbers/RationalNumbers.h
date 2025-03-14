@@ -1,6 +1,5 @@
 #pragma once
 #include <sstream>
-//#include <cmath>
 
 class CRational final
 {
