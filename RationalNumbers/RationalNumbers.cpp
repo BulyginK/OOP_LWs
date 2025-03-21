@@ -1,8 +1,4 @@
 ﻿#include "RationalNumbers.h"
-#include <utility>
-#include <stdexcept>
-
-//#include <cassert>
 
 CRational::CRational(int num, int denom)
 	: m_num(num)
@@ -33,7 +29,7 @@ int CRational::GetDenominator() const
 
 void CRational::Normalization()
 {
-	const int gcd = GCD(abs(m_num), m_denom);
+	const int gcd = GCD(abs(m_num), m_denom);  // есть в стандартной библеотеке - использовать ее
 	if (gcd != 0) {
 		m_num /= gcd;
 		m_denom /= gcd;
@@ -52,7 +48,7 @@ unsigned GCD(unsigned a, unsigned b)
 }
 
 // Least_Common_Multiple - НОК через НОД
-unsigned LCM(unsigned a, unsigned b)
+unsigned LCM(unsigned a, unsigned b)			// есть в стандартной библеотеке - использовать ее
 {
 	return (a * b) / GCD(a, b);
 }
@@ -71,7 +67,7 @@ CRational const CRational::operator+() const
 	return *this; // Разыменование this
 }
 // Реализация бинарного +
-CRational const operator+(const CRational& lhs, const CRational& rhs)
+CRational const operator+(const CRational& lhs, const CRational& rhs)   // реализовать бинарный минус через бинарынй плюс
 {
 	int lcm = LCM(lhs.GetDenominator(), rhs.GetDenominator());
 	int numerator = lhs.GetNumerator() * lcm / lhs.GetDenominator()
@@ -109,7 +105,7 @@ CRational const operator/(const CRational& lhs, const CRational& rhs)
 	return (CRational(lhs.GetNumerator() * rhs.GetDenominator(), lhs.GetDenominator() * rhs.GetNumerator()));
 }
 // Реализация *= 
-CRational& CRational::operator *=(const CRational& rhs)
+CRational& CRational::operator *=(const CRational& rhs)  // реализвать через умножение
 {
 	m_num *= rhs.GetNumerator();
 	m_denom *= rhs.GetDenominator();
@@ -117,7 +113,7 @@ CRational& CRational::operator *=(const CRational& rhs)
 	return *this;
 }
 // Реализация /= 
-CRational& CRational::operator /=(const CRational& rhs)
+CRational& CRational::operator /=(const CRational& rhs) // реализвать через деление
 {
 	if (rhs.GetNumerator() == 0)
 	{
@@ -183,25 +179,3 @@ std::pair<int, CRational> CRational::ToCompoundFraction()const
 	int numerator = m_num - m_denom * integer;
 	return std::make_pair(std::move(integer), CRational(numerator, m_denom));
 }
-
-
-
-//CRational::CRational() : m_numerator(0), m_denominator(1) {};
-//
-//CRational::CRational(int value) : m_numerator(value), m_denominator(1) {};
-//
-//CRational::CRational(int numerator, int denominator)
-//	: m_numerator(numerator)
-//	, m_denominator(denominator)
-//{
-//	if (denominator == 0)
-//	{
-//		throw std::invalid_argument("Denominator cannot be 0");
-//	}
-//	if (denominator < 0) // если знаменатель отрицателен - знак перемещают в числитель
-//	{
-//		m_numerator = -m_numerator;
-//		m_denominator = -m_denominator;
-//	}
-//	Normalization();
-//};
