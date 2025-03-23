@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <optional>
 
 enum class ErrorDescription
 {
@@ -25,13 +26,19 @@ class CCalculator
 public:
 	bool DeclareVariable(const std::string& identifier);
 	bool IsOperandDeclared(std::string identifier) const;
+	
+	bool SetVariableValue(std::string identifier, std::string newValue);
+	
 	std::map<std::string, double> GetAllVariables() const;
 
 	ErrorDescription GetErrorDescription() const;
 	void SetErrorDescription(const ErrorDescription& er);
 
 private:
-	std::vector<std::unique_ptr<Operand>> m_operand;
+	std::optional<std::unique_ptr<Operand>*> GetOperandRef(std::string identifier);
+	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
+
+	std::vector<std::unique_ptr<Operand>> m_operands;
 	ErrorDescription m_errorDescription = ErrorDescription::NoError;
 };
 
