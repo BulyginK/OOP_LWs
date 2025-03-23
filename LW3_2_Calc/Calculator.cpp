@@ -1,49 +1,46 @@
 ﻿#include "Calculator.h"
+#include "Variable.h"
 #include <regex>
 
-bool CCalculator::SetVar(const std::string& variable)
+bool CCalculator::DeclareVariable(const std::string& identifier)
 {
-	if (!IsNameCorrect(variable))
-	{
-		return false;
-	}
-	if (!IsVarExist(variable))
-	{
-		return false;
-	}
-	m_variables.insert({ variable, std::numeric_limits<double>::quiet_NaN() }); //присваиваем var NaN
-	// std::numeric_limits — это шаблонный класс из стандартной библиотеки C++, который предоставляет информацию о свойствах числовых типов (например, минимальное и максимальное значение, наличие NaN, точность и т.д.)
-	return true;
-};
-
-double CCalculator::GetValue(const std::string& id) const
-{
-	if (m_variables.find(id) != m_variables.end())
-	{
-		return m_variables.at(id);
-	}
-	return std::numeric_limits<double>::quiet_NaN();
-}
-
-bool CCalculator::IsNameCorrect(const std::string& name)
-{
-	const std::regex reg("^[a-zA-Z_]{1}[_0-9a-zA-Z]*$");
-	if (name.empty() || !regex_match(name, reg))
-	{
-		SetErrorDescription(ErrorDescription::InvalidUsage);
-		return false;
-	}
-	return true;
-}
-
-bool CCalculator::IsVarExist(const std::string& variable)
-{
-	if (m_variables.find(variable) != m_variables.end())
+	if (IsOperandDeclared(identifier))
 	{
 		SetErrorDescription(ErrorDescription::DuplicateName);
 		return false;
 	}
+	if (!Operand::IsCorrectIdentifier(identifier))
+	{
+		SetErrorDescription(ErrorDescription::InvalidUsage);
+		return false;
+	}
+	m_operand.emplace_back(std::make_unique<Variable>(identifier));
 	return true;
+};
+
+bool CCalculator::IsOperandDeclared(std::string identifier) const
+{
+	for (auto& operand : m_operand)
+	{
+		if (operand->GetIdentifier() == identifier)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+std::map<std::string, double> CCalculator::GetAllVariables() const
+{
+	std::map <std::string, double> vars;
+	for (auto& var : m_operand)
+	{
+		if (var->GetType() == Operand::OperandType::Variable)
+		{
+			vars[var->GetIdentifier()] = static_cast<Variable&>(*var).GetValue();
+		}
+	}
+	return vars;
 }
 
 ErrorDescription CCalculator::GetErrorDescription() const

@@ -1,5 +1,8 @@
 #pragma once
+#include "Operand.h"
 #include <string>
+#include <vector>
+#include <memory>
 #include <map>
 
 enum class ErrorDescription
@@ -20,19 +23,15 @@ static const std::map<std::string, ErrorDescription> ERROR_DESCRIPRTION
 class CCalculator
 {
 public:
-	CCalculator() = default;
-	~CCalculator() = default;
+	bool DeclareVariable(const std::string& identifier);
+	bool IsOperandDeclared(std::string identifier) const;
+	std::map<std::string, double> GetAllVariables() const;
 
-	bool SetVar(const std::string& variable);
-	double GetValue(const std::string& id) const;
 	ErrorDescription GetErrorDescription() const;
 	void SetErrorDescription(const ErrorDescription& er);
 
 private:
-	bool IsNameCorrect(const std::string& name);
-	bool IsVarExist(const std::string& variable);
-
-	std::map<std::string, double> m_variables;
+	std::vector<std::unique_ptr<Operand>> m_operand;
 	ErrorDescription m_errorDescription = ErrorDescription::NoError;
 };
 
