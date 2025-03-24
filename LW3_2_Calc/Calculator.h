@@ -39,7 +39,8 @@ public:
 
 	ErrorDescription GetErrorDescription() const;
 	void SetErrorDescription(const ErrorDescription& er);
-	std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
+	//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
+	std::optional<std::reference_wrapper<COperand>> GetOperandRef(const std::string& identifier) const;
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 
 private:

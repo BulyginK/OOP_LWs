@@ -107,16 +107,21 @@ BOOST_AUTO_TEST_CASE(get_existing_operand)
 {
     CCalculator calc;
     BOOST_CHECK(calc.DeclareVariable("test_var"));
-    auto& ref = calc.GetOperandRef("test_var");
-    BOOST_CHECK(ref != nullptr);
-    BOOST_CHECK(ref->GetIdentifier() == "test_var");
+    auto operandRef = calc.GetOperandRef("test_var");
+    BOOST_CHECK(operandRef.has_value());
+    // Проверяем содержимое
+    if (operandRef) {
+        COperand& op = operandRef->get();
+        BOOST_CHECK(op.GetIdentifier() == "test_var");
+    }
 }
 // Поиск несуществующей переменной
 BOOST_AUTO_TEST_CASE(get_nonexistent_operand)
 {
     CCalculator calc;
-    auto& ref = calc.GetOperandRef("ghost_var");
-    BOOST_CHECK(ref == nullptr);
+    auto operandRef = calc.GetOperandRef("ghost_var");
+    BOOST_CHECK(!operandRef.has_value());
+    BOOST_CHECK(operandRef == std::nullopt);
 }
 // Объявление и присваивание переменной
 BOOST_AUTO_TEST_CASE(declare_and_set_variable)

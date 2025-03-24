@@ -52,23 +52,47 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 		SetErrorDescription(ErrorDescription::NotNumberEntered);
 		return false;
 	}
-	std::unique_ptr<COperand>& operandRef = GetOperandRef(identifier);
-	CVariable& variable = static_cast<CVariable&>(*operandRef);
-	variable.SetValue(value.value());
-	return true;
+	auto operandRef = GetOperandRef(identifier);
+	if (!operandRef)
+	{
+		m_operands.emplace_back(std::make_unique<CVariable>(identifier, value.value())); 		// Если переменная не существует, создаем новую
+		return true;
+	}
+	// Проверка типа операнда
+	try {
+		CVariable& variable = dynamic_cast<CVariable&>(operandRef->get());
+		variable.SetValue(value.value());
+		return true;
+	}
+	catch (const std::bad_cast&) {
+		SetErrorDescription(ErrorDescription::InvalidUsage);
+		return false;
+	}
 }
 
-std::unique_ptr<COperand>& CCalculator::GetOperandRef(std::string identifier)
+//std::unique_ptr<COperand>& CCalculator::GetOperandRef(std::string identifier)
+//{
+//	for (auto& var : m_operands)
+//	{
+//		if (var->GetIdentifier() == identifier)
+//		{
+//			return var;
+//		}
+//	}
+//	static std::unique_ptr<COperand> notFound(nullptr);
+//	return notFound;
+//}
+
+std::optional<std::reference_wrapper<COperand>> CCalculator::GetOperandRef(const std::string& identifier) const
 {
 	for (auto& var : m_operands)
 	{
 		if (var->GetIdentifier() == identifier)
 		{
-			return var;
+			return std::ref(*var);
 		}
 	}
-	static std::unique_ptr<COperand> notFound(nullptr);
-	return notFound;
+	return std::nullopt;
 }
 
 std::optional<double> CCalculator::DetermineNewValueOfVariable(const std::string& newValue)
