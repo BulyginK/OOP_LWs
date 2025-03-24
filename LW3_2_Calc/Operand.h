@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class Operand
+class COperand
 {
 public:
 
@@ -17,6 +17,6 @@ public:
 
 	static bool IsCorrectIdentifier(const std::string& identifier);
 
-	virtual ~Operand() = default;
+	virtual ~COperand() = default;
 
 };

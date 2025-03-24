@@ -8,10 +8,12 @@
 
 enum class ErrorDescription
 {
-	UnknownCommand,
-	InvalidUsage,
-	DuplicateName,
-	NoError
+	UnknownCommand,		// Если введена неизвестная команда
+	InvalidUsage,		// Если синтаксис введенной команды не удовлетворяет правилам (в том числе недопустимый идентификатор)
+	DuplicateName,		// Если переменная с таким именем уже была объявлена
+	NameNotExist,		// Если в команде используется необъявленная переменная
+	NotNumberEntered,	// Если присваивается не число
+	NoError			
 };
 
 static const std::map<std::string, ErrorDescription> ERROR_DESCRIPRTION
@@ -19,13 +21,17 @@ static const std::map<std::string, ErrorDescription> ERROR_DESCRIPRTION
 	{ "Unknown command", ErrorDescription::UnknownCommand },
 	{ "Invalid usage", ErrorDescription::InvalidUsage },
 	{ "Name already exists", ErrorDescription::DuplicateName },
+	{ "Name does not exist", ErrorDescription::NameNotExist },
+	{ "Not a number entered", ErrorDescription::NotNumberEntered}
 };
 
 class CCalculator
 {
 public:
+	CCalculator();
+
 	bool DeclareVariable(const std::string& identifier);
-	bool IsOperandDeclared(std::string identifier) const;
+	bool IsOperandDeclared(const std::string& identifier) const;
 	
 	bool SetVariableValue(std::string identifier, std::string newValue);
 	
@@ -33,12 +39,19 @@ public:
 
 	ErrorDescription GetErrorDescription() const;
 	void SetErrorDescription(const ErrorDescription& er);
-
-private:
-	std::optional<std::unique_ptr<Operand>*> GetOperandRef(std::string identifier);
+	std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 
-	std::vector<std::unique_ptr<Operand>> m_operands;
+private:
+	// для тестов вынесены в pablic
+	//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
+	//std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
+	
+	//std::optional<std::unique_ptr<COperand>*> GetOperandRef(const std::string& identifier);
+	//std::optional<COperand*> GetOperandRef(const std::string& identifier) const;
+	
+
+	std::vector<std::unique_ptr<COperand>> m_operands;
 	ErrorDescription m_errorDescription = ErrorDescription::NoError;
 };
 

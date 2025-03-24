@@ -2,13 +2,14 @@
 #include <string>
 #include "Operand.h"
 
-class Variable final :
-	public Operand
+class CVariable final :
+	public COperand
 {
 public:
-	Variable(std::string identifier, double value = std::numeric_limits<double>::quiet_NaN());
+	// «начение переменной после ее объ€влени€ не определено (использовать значение nan дл€ этих целей)
+	CVariable(std::string identifier, double value = std::numeric_limits<double>::quiet_NaN());
 
-	OperandType Operand::GetType() const override;
+	OperandType COperand::GetType() const override;
 	std::string GetIdentifier() const override;
 	double GetValue() const;
 	void SetValue(double value);

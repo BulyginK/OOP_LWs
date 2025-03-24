@@ -52,5 +52,81 @@ BOOST_AUTO_TEST_CASE(variable_is_set_to_nan)
     BOOST_CHECK(variables.find("nan_var") != variables.end()); // Проверяем, что переменная существует
     BOOST_CHECK(std::isnan(variables.at("nan_var"))); // Проверяем, что значение — NaN
 }
+// Успешное присваивание числа
+BOOST_AUTO_TEST_CASE(set_variable_with_valid_number)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.SetVariableValue("x", "42.5")); // Успешное присваивание
+
+    auto variables = calc.GetAllVariables();
+    BOOST_CHECK(variables.find("x") != variables.end());
+    BOOST_CHECK_CLOSE(variables.at("x"), 42.5, 1e-6); // Проверяем значение с допустимой погрешностью
+}
+// Ошибка: неверный идентификатор переменной
+BOOST_AUTO_TEST_CASE(set_variable_with_invalid_identifier)
+{
+    CCalculator calc;
+    BOOST_CHECK(!calc.SetVariableValue("123x", "10")); // Идентификатор не может начинаться с цифры
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
+}
+// Ошибка: некорректное значение (не число)
+BOOST_AUTO_TEST_CASE(set_variable_with_invalid_value)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    BOOST_CHECK(!calc.SetVariableValue("y", "abc")); // Не число
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::NotNumberEntered);
+}
+// Корректные числа
+BOOST_AUTO_TEST_CASE(parse_valid_numbers)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DetermineNewValueOfVariable("123").value() == 123.0);
+    BOOST_CHECK(calc.DetermineNewValueOfVariable("-45.67").value() == -45.67);
+    BOOST_CHECK(calc.DetermineNewValueOfVariable("0.5").value() == 0.5);
+}
+// Некорректные числа
+BOOST_AUTO_TEST_CASE(parse_invalid_numbers)
+{
+    CCalculator calc;
+    BOOST_CHECK(!calc.DetermineNewValueOfVariable("123abc").has_value()); // Лишние символы
+    BOOST_CHECK(!calc.DetermineNewValueOfVariable("12.34.56").has_value()); // Две точки
+    BOOST_CHECK(!calc.DetermineNewValueOfVariable("").has_value()); // Пустая строка
+}
+// Граничные случаи
+BOOST_AUTO_TEST_CASE(parse_edge_cases)
+{
+    CCalculator calc;
+    BOOST_CHECK(!calc.DetermineNewValueOfVariable("1e999").has_value());
+    BOOST_CHECK(calc.DetermineNewValueOfVariable("007").value() == 7.0); 
+    BOOST_CHECK(!calc.DetermineNewValueOfVariable("-").has_value());
+}
+// Поиск существующей переменной
+BOOST_AUTO_TEST_CASE(get_existing_operand)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("test_var"));
+    auto& ref = calc.GetOperandRef("test_var");
+    BOOST_CHECK(ref != nullptr);
+    BOOST_CHECK(ref->GetIdentifier() == "test_var");
+}
+// Поиск несуществующей переменной
+BOOST_AUTO_TEST_CASE(get_nonexistent_operand)
+{
+    CCalculator calc;
+    auto& ref = calc.GetOperandRef("ghost_var");
+    BOOST_CHECK(ref == nullptr);
+}
+// Объявление и присваивание переменной
+BOOST_AUTO_TEST_CASE(declare_and_set_variable)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("temp"));
+    BOOST_CHECK(calc.SetVariableValue("temp", "-273.15"));
+    auto variables = calc.GetAllVariables();
+    BOOST_CHECK_CLOSE(variables.at("temp"), -273.15, 1e-6);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
