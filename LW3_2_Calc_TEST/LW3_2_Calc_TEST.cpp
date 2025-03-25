@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(set_variable_with_invalid_value)
     CCalculator calc;
     BOOST_CHECK(calc.DeclareVariable("y"));
     BOOST_CHECK(!calc.SetVariableValue("y", "abc")); // Не число
-    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::NotNumberEntered);
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::IncorrectIdentifier);
 }
 // Корректные числа
 BOOST_AUTO_TEST_CASE(parse_valid_numbers)
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(get_nonexistent_operand)
     BOOST_CHECK(!operandRef.has_value());
     BOOST_CHECK(operandRef == std::nullopt);
 }
-// Объявление и присваивание переменной
+// Объявление и затем присваивание переменной
 BOOST_AUTO_TEST_CASE(declare_and_set_variable)
 {
     CCalculator calc;
@@ -132,6 +132,68 @@ BOOST_AUTO_TEST_CASE(declare_and_set_variable)
     auto variables = calc.GetAllVariables();
     BOOST_CHECK_CLOSE(variables.at("temp"), -273.15, 1e-6);
 }
+// Объявление переменной с присваиванием
+BOOST_AUTO_TEST_CASE(declare_variable_with_set_value)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.SetVariableValue("temp", "-27.15"));
+    auto variables = calc.GetAllVariables();
+    BOOST_CHECK_CLOSE(variables.at("temp"), -27.15, 1e-6);
+}
+// Ошибка: некорректное значение ранее объявленного идентификатора
+BOOST_AUTO_TEST_CASE(set_right_variable_with_invalid_value)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    BOOST_CHECK(!calc.SetVariableValue("y", "12abc"));
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::IncorrectIdentifier);
+}
+// Успех: переменная устанавливается в значение другой переменной
+BOOST_AUTO_TEST_CASE(set_variable_to_another_variable_value)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.SetVariableValue("x", "10"));
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    BOOST_CHECK(calc.SetVariableValue("y", "x"));
+    auto variables = calc.GetAllVariables();
+    BOOST_CHECK_CLOSE(variables.at("y"), 10.0, 1e-9);
+}
+// Ошибка: попытка установить переменную в значение несуществующей переменной
+BOOST_AUTO_TEST_CASE(set_variable_to_nonexistent_variable)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    BOOST_CHECK(!calc.SetVariableValue("y", "nonexistent"));
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::IncorrectIdentifier);
+}
+// Успех: последовательное присваивание переменных
+BOOST_AUTO_TEST_CASE(chained_variable_assignment)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("a"));
+    BOOST_CHECK(calc.SetVariableValue("a", "5"));
+    BOOST_CHECK(calc.DeclareVariable("b"));
+    BOOST_CHECK(calc.SetVariableValue("b", "a"));
+    BOOST_CHECK(calc.DeclareVariable("c"));
+    BOOST_CHECK(calc.SetVariableValue("c", "b"));
+    auto variables = calc.GetAllVariables();
+    BOOST_CHECK_CLOSE(variables.at("a"), 5.0, 1e-9);
+    BOOST_CHECK_CLOSE(variables.at("b"), 5.0, 1e-9);
+    BOOST_CHECK_CLOSE(variables.at("c"), 5.0, 1e-9);
+}
 
+// TODO
+// Ошибка: циклическое присваивание переменных - 
+//BOOST_AUTO_TEST_CASE(cyclic_variable_assignment)
+//{
+//    CCalculator calc;
+//    BOOST_CHECK(calc.DeclareVariable("x"));
+//    BOOST_CHECK(calc.DeclareVariable("y"));
+//    BOOST_CHECK(calc.SetVariableValue("x", "10"));
+//    BOOST_CHECK(calc.SetVariableValue("y", "x")); // допустимо
+//    BOOST_CHECK(!calc.SetVariableValue("x", "y")); // создает цикл
+//    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
+//}
 
 BOOST_AUTO_TEST_SUITE_END()

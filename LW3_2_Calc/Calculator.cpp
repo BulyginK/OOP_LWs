@@ -49,7 +49,6 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 	auto value = DetermineNewValueOfVariable(newValue);
 	if (!value)
 	{
-		SetErrorDescription(ErrorDescription::NotNumberEntered);
 		return false;
 	}
 	auto operandRef = GetOperandRef(identifier);
@@ -58,7 +57,7 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 		m_operands.emplace_back(std::make_unique<CVariable>(identifier, value.value())); 		// Если переменная не существует, создаем новую
 		return true;
 	}
-	// Проверка типа операнда
+	// указан <идентификатор2>
 	try {
 		CVariable& variable = dynamic_cast<CVariable&>(operandRef->get());
 		variable.SetValue(value.value());
@@ -108,11 +107,35 @@ std::optional<double> CCalculator::DetermineNewValueOfVariable(const std::string
 		// ec (std::errc) — код ошибки (аналог errno)
 
 		if (ec == std::errc() && ptr == str + newValue.size())
+		{
 			return value;
+		}
 	}
-	else //это идентификатор с корректным именем
+	else if (!COperand::IsCorrectIdentifier(newValue))
 	{
+		SetErrorDescription(ErrorDescription::IncorrectIdentifier);
 		return std::nullopt;
+	}
+	else // правый идентификатор с корректным именем
+	{
+		auto operandRef = GetOperandRef(newValue);
+
+		if (!operandRef) //такого идентификатора не существует
+		{
+			SetErrorDescription(ErrorDescription::IncorrectIdentifier);
+			return std::nullopt;
+		}
+		else // этот идентификатор существует
+		{
+			try {
+				CVariable& variable = dynamic_cast<CVariable&>(operandRef->get());
+				return variable.GetValue();
+			}
+			catch (const std::bad_cast&) {
+				SetErrorDescription(ErrorDescription::InvalidUsage);
+				return false;
+			}
+		}
 	}
 }
 

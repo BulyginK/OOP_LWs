@@ -13,6 +13,7 @@ enum class ErrorDescription
 	DuplicateName,		// Если переменная с таким именем уже была объявлена
 	NameNotExist,		// Если в команде используется необъявленная переменная
 	NotNumberEntered,	// Если присваивается не число
+	IncorrectIdentifier,
 	NoError			
 };
 
@@ -22,7 +23,8 @@ static const std::map<std::string, ErrorDescription> ERROR_DESCRIPRTION
 	{ "Invalid usage", ErrorDescription::InvalidUsage },
 	{ "Name already exists", ErrorDescription::DuplicateName },
 	{ "Name does not exist", ErrorDescription::NameNotExist },
-	{ "Not a number entered", ErrorDescription::NotNumberEntered}
+	{ "Not a number entered", ErrorDescription::NotNumberEntered},
+	{ "Incorrect identifier", ErrorDescription::IncorrectIdentifier }
 };
 
 class CCalculator
