@@ -5,8 +5,7 @@
 
 CCalculator::CCalculator() {};
 
-// Объявляет переменную
-bool CCalculator::DeclareVariable(const std::string& identifier)
+bool CCalculator::CheckIdentifier(const std::string& identifier)
 {
 	if (!COperand::IsCorrectIdentifier(identifier))
 	{
@@ -18,6 +17,13 @@ bool CCalculator::DeclareVariable(const std::string& identifier)
 		SetErrorDescription(ErrorDescription::DuplicateName);
 		return false;
 	}
+	return true;
+}
+
+// Объявляет переменную
+bool CCalculator::DeclareVariable(const std::string& identifier)
+{
+	CheckIdentifier(identifier);
 	m_operands.emplace_back(std::make_unique<CVariable>(identifier));
 	return true;
 };
@@ -84,11 +90,11 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 
 std::optional<std::reference_wrapper<COperand>> CCalculator::GetOperandRef(const std::string& identifier) const
 {
-	for (auto& var : m_operands)
+	for (auto& operand : m_operands)
 	{
-		if (var->GetIdentifier() == identifier)
+		if (operand->GetIdentifier() == identifier)
 		{
-			return std::ref(*var);
+			return std::ref(*operand);
 		}
 	}
 	return std::nullopt;
@@ -162,4 +168,11 @@ ErrorDescription CCalculator::GetErrorDescription() const
 void CCalculator::SetErrorDescription(const ErrorDescription& errorDescription)
 {
 	m_errorDescription = errorDescription;
+}
+
+bool CCalculator::DeclareFunction(const std::string& identifier, const std::string& expression)
+{
+	CheckIdentifier(identifier);
+	// TODO 
+	return true;
 }

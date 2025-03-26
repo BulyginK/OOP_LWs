@@ -196,4 +196,6 @@ BOOST_AUTO_TEST_CASE(chained_variable_assignment)
 //    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
 //}
 
+
+
 BOOST_AUTO_TEST_SUITE_END()

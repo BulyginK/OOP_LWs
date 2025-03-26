@@ -33,6 +33,10 @@ public:
 	CCalculator();
 
 	bool DeclareVariable(const std::string& identifier);
+	bool DeclareFunction(const std::string& identifier, const std::string& expression);
+
+	bool CheckIdentifier(const std::string& identifier);
+
 	bool IsOperandDeclared(const std::string& identifier) const;
 	
 	bool SetVariableValue(std::string identifier, std::string newValue);
