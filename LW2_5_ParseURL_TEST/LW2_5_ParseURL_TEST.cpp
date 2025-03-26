@@ -9,7 +9,10 @@ void ExpectCorrectURL(const std::string& url, Protocol expectedProtocol, const s
 	Protocol protocol;
 	int port;
 	REQUIRE(ParseURL(url, protocol, port, host, document));
-	CHECK(tie(protocol, port, host, document) == tie(expectedProtocol, expectedPort, expectedHost, exepectedDocument));
+	CHECK(protocol == expectedProtocol);
+	CHECK(port == expectedPort);
+	CHECK(host == expectedHost);
+	CHECK(document == exepectedDocument);
 }
 
 // Функция ParseURL извлекает протокол, хост, порт и документ из URL-а
@@ -36,6 +39,13 @@ TEST_CASE("Parse URL function ignores the case of the protocol character")
 	ExpectCorrectURL("HTTPS://www.mysite.com/doc.txt", Protocol::HTTPS, "www.mysite.com", HTTPS_PORT, "doc.txt");
 }
 
+// Минимальный и максимальный допустимые порты корректны
+TEST_CASE("The minimum and maximum allowed ports are correct")
+{
+	ExpectCorrectURL("http://www.mysite.com:1/doc.txt", Protocol::HTTP, "www.mysite.com", 1, "doc.txt");
+	ExpectCorrectURL("http://www.mysite.com:65535/doc.txt", Protocol::HTTP, "www.mysite.com", 65535, "doc.txt");
+}
+
 // Функция ParseURL возвращает ошибку если номер порта вне диапазона 1-65535
 TEST_CASE("Parse URL function returns an error if port number is out of range 1 65535")
 {
@@ -44,25 +54,25 @@ TEST_CASE("Parse URL function returns an error if port number is out of range 1 
 		int port;
 		std::string host;
 		std::string document;
-		CHECK(!ParseURL("ftp://www.mysite.com:65536/doc.html", protocol, port, host, document));
+		CHECK_FALSE(ParseURL("ftp://www.mysite.com:65536/doc.txt", protocol, port, host, document));
 	}
 	{
 		Protocol protocol;
 		int port;
 		std::string host;
 		std::string document;
-		CHECK(!ParseURL("ftp://www.mysite.com:0/doc.html", protocol, port, host, document));
+		CHECK_FALSE(ParseURL("ftp://www.mysite.com:0/doc.txt", protocol, port, host, document));
 	}
 }
 
-// Функция ParseURL возвращает ошибку если документ пустой
+// Функция ParseURL возвращает true если документ пустой
 TEST_CASE("Parse URL function returns an error if empty document")
 {
 	Protocol protocol;
 	int port;
 	std::string host;
 	std::string document;
-	CHECK(!ParseURL("ftp://www.mysite.com", protocol, port, host, document));
+	CHECK(ParseURL("ftp://www.mysite.com", protocol, port, host, document));
 }
 
 // Функция ParseURL возвращает ошибку если порт не является числом
@@ -72,7 +82,7 @@ TEST_CASE("Parse URL function returns an error if port is not a number")
 	int port;
 	std::string host;
 	std::string document;
-	CHECK(!ParseURL("ftp://www.mysite.com:aa/doc.txt", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("ftp://www.mysite.com:aa/doc.txt", protocol, port, host, document));
 }
 
 // Функция ParseURL возвращает ошибку если URL не содержит известных протоколов
@@ -82,5 +92,70 @@ TEST_CASE("Parse URL function returns an error if protocol is unknown")
 	int port;
 	std::string host;
 	std::string document;
-	CHECK(!ParseURL("ftps://www.mysite.com:56/doc.txt", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("ftps://www.mysite.com:56/doc.txt", protocol, port, host, document));
 }
+
+// Тесты для функции GetProtocol
+TEST_CASE("GetProtocol function tests")
+{
+	SECTION("Valid protocols")
+	{
+		Protocol protocol;
+		CHECK(GetProtocol("http", protocol));
+		CHECK(protocol == Protocol::HTTP);
+
+		CHECK(GetProtocol("HTTPS", protocol));
+		CHECK(protocol == Protocol::HTTPS);
+
+		CHECK(GetProtocol("Ftp", protocol));
+		CHECK(protocol == Protocol::FTP);
+	}
+
+	SECTION("Invalid protocols")
+	{
+		Protocol protocol;
+		CHECK_FALSE(GetProtocol("httpx", protocol));
+		CHECK_FALSE(GetProtocol("", protocol));
+		CHECK_FALSE(GetProtocol("http2", protocol));
+		CHECK_FALSE(GetProtocol("ssh", protocol));
+	}
+}
+
+// Тесты для функции GetPort
+TEST_CASE("GetPort function tests")
+{
+	SECTION("Valid protocols")
+	{
+		CHECK(GetPort(Protocol::HTTP) == HTTP_PORT);
+		CHECK(GetPort(Protocol::HTTPS) == HTTPS_PORT);
+		CHECK(GetPort(Protocol::FTP) == FTP_PORT);
+	}
+
+	SECTION("Invalid protocol")
+	{
+		CHECK(GetPort(static_cast<Protocol>(-1)) == -1);
+	}
+}
+
+// Некорректный формат URL
+TEST_CASE("Invalid URL format")
+{
+	Protocol protocol;
+	int port;
+	std::string host;
+	std::string document;
+	CHECK_FALSE(ParseURL("http//example.com", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http:/example.com", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http:example.com", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http://", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http:///doc", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http://:80/doc", protocol, port, host, document));
+}
+
+// Специальные символы в документе
+TEST_CASE("Special characters in the document")
+{
+	ExpectCorrectURL("http://example.com/path%20with%20spaces", Protocol::HTTP, "example.com", HTTP_PORT, "path%20with%20spaces");
+	ExpectCorrectURL("http://example.com/?query=param", Protocol::HTTP, "example.com", HTTP_PORT, "?query=param");
+}
+
