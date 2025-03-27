@@ -144,9 +144,9 @@ TEST_CASE("Invalid URL format")
 	int port;
 	std::string host;
 	std::string document;
-	CHECK_FALSE(ParseURL("http//example.com", protocol, port, host, document));
-	CHECK_FALSE(ParseURL("http:/example.com", protocol, port, host, document));
-	CHECK_FALSE(ParseURL("http:example.com", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http//www.mysite.com", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http:/www.mysite.com", protocol, port, host, document));
+	CHECK_FALSE(ParseURL("http:www.mysite.com", protocol, port, host, document));
 	CHECK_FALSE(ParseURL("http://", protocol, port, host, document));
 	CHECK_FALSE(ParseURL("http:///doc", protocol, port, host, document));
 	CHECK_FALSE(ParseURL("http://:80/doc", protocol, port, host, document));
@@ -155,7 +155,7 @@ TEST_CASE("Invalid URL format")
 // Специальные символы в документе
 TEST_CASE("Special characters in the document")
 {
-	ExpectCorrectURL("http://example.com/path%20with%20spaces", Protocol::HTTP, "example.com", HTTP_PORT, "path%20with%20spaces");
-	ExpectCorrectURL("http://example.com/?query=param", Protocol::HTTP, "example.com", HTTP_PORT, "?query=param");
+	ExpectCorrectURL("http://www.mysite.com/path%20with%20spaces", Protocol::HTTP, "www.mysite.com", HTTP_PORT, "path%20with%20spaces");
+	ExpectCorrectURL("http://www.mysite.com/?query=param", Protocol::HTTP, "www.mysite.com", HTTP_PORT, "?query=param");
 }
 

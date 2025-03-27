@@ -1,5 +1,4 @@
 #pragma once
-//#include <string>
 #include <regex>
 
 constexpr int HTTP_PORT = 80;
@@ -18,4 +17,4 @@ enum class Protocol
 
 bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string& host, std::string& document);
 bool GetProtocol(const std::string& str, Protocol& protocol);
-int GetPort(const Protocol& protocol);
+int GetPort(const Protocol& protocol);  // если протокол не корректный - возврат -1
