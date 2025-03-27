@@ -30,12 +30,12 @@ static const std::map<std::string, ErrorDescription> ERROR_DESCRIPRTION
 class CCalculator
 {
 public:
-	CCalculator();
+	CCalculator() = default;
 
 	bool DeclareVariable(const std::string& identifier);
 	bool DeclareFunction(const std::string& identifier, const std::string& expression);
 
-	bool CheckIdentifier(const std::string& identifier);
+	
 
 	bool IsOperandDeclared(const std::string& identifier) const;
 	
@@ -50,7 +50,8 @@ public:
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 
 private:
-	// для тестов вынесены в pablic
+	bool ValidateIdentifier(const std::string& identifier);
+	// для тестов вынесены в public
 	//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
 	//std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 	
@@ -58,7 +59,7 @@ private:
 	//std::optional<COperand*> GetOperandRef(const std::string& identifier) const;
 	
 
-	std::vector<std::unique_ptr<COperand>> m_operands;
+	std::vector<std::unique_ptr<COperand>> m_operands;  // std::unique_ptr тк нужны гетерогенные объекты - полиморфизм через указатели
 	ErrorDescription m_errorDescription = ErrorDescription::NoError;
 };
 

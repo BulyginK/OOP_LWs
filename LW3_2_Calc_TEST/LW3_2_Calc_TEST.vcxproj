@@ -189,6 +189,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\LW3_2_Calc\Calculator.cpp" />
+    <ClCompile Include="..\LW3_2_Calc\FunctionExpression.cpp" />
+    <ClCompile Include="..\LW3_2_Calc\FunctionIdentifier.cpp" />
     <ClCompile Include="..\LW3_2_Calc\Operand.cpp" />
     <ClCompile Include="..\LW3_2_Calc\Variable.cpp" />
     <ClCompile Include="LW3_2_Calc_TEST.cpp" />

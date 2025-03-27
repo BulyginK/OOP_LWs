@@ -1,32 +1,11 @@
 ﻿#include "Calculator.h"
 #include "Variable.h"
+#include "FunctionIdentifier.h"
+#include "FunctionExpression.h"
 #include <regex>
 #include <charconv>
 
-CCalculator::CCalculator() {};
-
-bool CCalculator::CheckIdentifier(const std::string& identifier)
-{
-	if (!COperand::IsCorrectIdentifier(identifier))
-	{
-		SetErrorDescription(ErrorDescription::InvalidUsage);
-		return false;
-	}
-	if (IsOperandDeclared(identifier))
-	{
-		SetErrorDescription(ErrorDescription::DuplicateName);
-		return false;
-	}
-	return true;
-}
-
-// Объявляет переменную
-bool CCalculator::DeclareVariable(const std::string& identifier)
-{
-	CheckIdentifier(identifier);
-	m_operands.emplace_back(std::make_unique<CVariable>(identifier));
-	return true;
-};
+//CCalculator::CCalculator() {};
 
 // Идентификатор не должен совпадать ни с одним из ранее объявленных имен переменных и функций
 bool CCalculator::IsOperandDeclared(const std::string& identifier) const
@@ -41,6 +20,35 @@ bool CCalculator::IsOperandDeclared(const std::string& identifier) const
 	return false;
 }
 
+
+bool CCalculator::ValidateIdentifier(const std::string& identifier)
+{
+	// Идентификатор должен соответствовать заданному условию 
+	if (!COperand::IsCorrectIdentifier(identifier))
+	{
+		SetErrorDescription(ErrorDescription::InvalidUsage);
+		return false;
+	}
+	// Идентификатор не должен совпадать ни с одним из ранее объявленных имен переменных и функций
+	if (IsOperandDeclared(identifier))
+	{
+		SetErrorDescription(ErrorDescription::DuplicateName);
+		return false;
+	}
+	return true;
+}
+
+// Объявляет переменную
+bool CCalculator::DeclareVariable(const std::string& identifier)
+{
+	if (ValidateIdentifier(identifier))
+	{
+		m_operands.emplace_back(std::make_unique<CVariable>(identifier));
+		return true;
+	}
+	return false;
+};
+
 // let <идентификатор1> = <число с плавающей запятой> либо let <идентификатор1> = <идентификатор2>
 // Присваивает переменной с именем <идентификатор1> числовое значение, либо текущее значение ранее объявленного идентификатора с именем <идентификатор2>
 // Если переменная с именем <идентификатор1> не была ранее объявлена, происходит объявление новой переменной.
@@ -52,20 +60,21 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 		SetErrorDescription(ErrorDescription::InvalidUsage);
 		return false;
 	}
-	auto value = DetermineNewValueOfVariable(newValue);
+	auto value = DetermineNewValueOfVariable(newValue);  // обработка присваиваемого значения
 	if (!value)
 	{
+		// SetErrorDescription установлено ранее в DetermineNewValueOfVariable
 		return false;
 	}
 	auto operandRef = GetOperandRef(identifier);
-	if (!operandRef)
+	if (!operandRef) // Если переменная не существует, создаем новую
 	{
-		m_operands.emplace_back(std::make_unique<CVariable>(identifier, value.value())); 		// Если переменная не существует, создаем новую
+		m_operands.emplace_back(std::make_unique<CVariable>(identifier, value.value())); // можно вместо value.value() использовать разыменование *value, но не будет выбрасываться исключение std::bad_optional_access с понятным сообщением 	
 		return true;
 	}
-	// указан <идентификатор2>
+	// если указан <идентификатор2>
 	try {
-		CVariable& variable = dynamic_cast<CVariable&>(operandRef->get());
+		CVariable& variable = dynamic_cast<CVariable&>(operandRef->get()); // operandRef->get() возвращает ссылку COperand& из обертки reference_wrapper
 		variable.SetValue(value.value());
 		return true;
 	}
@@ -88,7 +97,7 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 //	return notFound;
 //}
 
-std::optional<std::reference_wrapper<COperand>> CCalculator::GetOperandRef(const std::string& identifier) const
+std::optional<std::reference_wrapper<COperand>> CCalculator::GetOperandRef(const std::string& identifier) const  // reference_wrapper — это обёртка для ссылки
 {
 	for (auto& operand : m_operands)
 	{
@@ -170,9 +179,56 @@ void CCalculator::SetErrorDescription(const ErrorDescription& errorDescription)
 	m_errorDescription = errorDescription;
 }
 
-bool CCalculator::DeclareFunction(const std::string& identifier, const std::string& expression)
+bool CCalculator::DeclareFunction(const std::string& identifier, const std::string& expression) // expression - выражение
 {
-	CheckIdentifier(identifier);
-	// TODO 
-	return true;
+	if (!ValidateIdentifier(identifier))
+	{
+		return false;
+	}
+
+	if (COperand::IsCorrectIdentifier(expression)) // если fn <идентификатор1> = <идентификатор2>
+	{
+		if (!IsOperandDeclared(expression))
+		{
+			SetErrorDescription(ErrorDescription::NameNotExist);
+			return false;
+		}
+		m_operands.emplace_back(std::make_unique<CFunctionIdentifier>(identifier, expression));
+		return true;
+	}
+	else if (CFunctionExpression::IsCorrectFunctionExpression(expression)) //fn <идентификатор1> = <идентификатор2><операция><идентификатор3>
+	{
+		//const std::regex reg("[+\\-*\\/]");
+		const std::regex reg(R"([-+*/])");
+		std::smatch match;
+		if (std::regex_search(expression, match, reg))
+		{
+			const std::string sign = match[0];
+
+			size_t signPos = expression.find(sign);
+			if (signPos != std::string::npos)
+			{
+				std::string operand1, operand2;
+				unsigned int exprLen = expression.length();
+				operand1.append(expression, 0, signPos);
+				operand2.append(expression, signPos + 1, exprLen - signPos - 1);
+				if (
+					COperand::IsCorrectIdentifier(operand1) &&
+					COperand::IsCorrectIdentifier(operand2) &&
+					IsOperandDeclared(operand1) &&
+					IsOperandDeclared(operand2)
+					)
+				{
+					m_operands.emplace_back(std::make_unique<CFunctionExpression>(identifier, operand1, operand2, sign));
+					return true;
+				}
+			}
+		}
+
+	}
+	else
+	{
+		SetErrorDescription(ErrorDescription::InvalidUsage);
+		return false;
+	}
 }

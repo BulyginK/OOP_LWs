@@ -33,6 +33,12 @@
     <ClCompile Include="..\LW3_2_Calc\Variable.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\LW3_2_Calc\FunctionExpression.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LW3_2_Calc\FunctionIdentifier.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

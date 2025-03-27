@@ -7,9 +7,9 @@ public:
 
 	enum class OperandType
 	{
+		Variable,
 		FunctionIdentifier,
-		FunctionExpression,
-		Variable
+		FunctionExpression
 	};
 
 	virtual OperandType GetType() const = 0;

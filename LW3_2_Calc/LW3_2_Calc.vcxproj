@@ -189,12 +189,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Calculator.cpp" />
+    <ClCompile Include="FunctionExpression.cpp" />
+    <ClCompile Include="FunctionIdentifier.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Operand.cpp" />
     <ClCompile Include="Variable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculator.h" />
+    <ClInclude Include="FunctionIdentifier.h" />
+    <ClInclude Include="FunctionExpression.h" />
     <ClInclude Include="Operand.h" />
     <ClInclude Include="Variable.h" />
   </ItemGroup>
