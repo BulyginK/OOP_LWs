@@ -30,6 +30,7 @@ public:
 	bool IsOperandDeclared(const std::string& identifier) const;
 	bool SetVariableValue(std::string identifier, std::string newValue);
 	std::map<std::string, double> GetAllOperands() const;
+	std::map<std::string, double> GetAllFunctions() const;
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 
 	ErrorDescription GetErrorDescription() const;
@@ -38,7 +39,7 @@ public:
 	std::optional<std::reference_wrapper<COperand>> GetOperandRef(const std::string& identifier) const;
 
 	std::optional<double> CountValue(const std::string& identifier);
-	double Calculate(const std::string& identifier, double& res);
+	double Calculate(const std::string& identifier, double& res) const;
 
 	static std::string RemoveAllSpaces(std::string str);
 

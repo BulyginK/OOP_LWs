@@ -193,6 +193,7 @@
     <ClCompile Include="FunctionIdentifier.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Operand.cpp" />
+    <ClCompile Include="RemoteControl.cpp" />
     <ClCompile Include="Variable.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="FunctionIdentifier.h" />
     <ClInclude Include="FunctionExpression.h" />
     <ClInclude Include="Operand.h" />
+    <ClInclude Include="RemoteControl.h" />
     <ClInclude Include="Variable.h" />
   </ItemGroup>
   <ItemGroup>

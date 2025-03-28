@@ -33,6 +33,9 @@
     <ClCompile Include="FunctionExpression.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="RemoteControl.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calculator.h">
@@ -48,6 +51,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="FunctionExpression.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteControl.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

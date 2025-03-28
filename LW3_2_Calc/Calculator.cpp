@@ -248,7 +248,7 @@ std::optional<double> CCalculator::CountValue(const std::string& identifier)
 	}
 }
 
-double CCalculator::Calculate(const std::string& identifier, double& res)
+double CCalculator::Calculate(const std::string& identifier, double& res) const
 {
 	if (std::isnan(res))
 	{
@@ -295,8 +295,22 @@ double CCalculator::Calculate(const std::string& identifier, double& res)
 			}
 			break;
 		}
-		SetErrorDescription(ErrorDescription::InvalidUsage);
-		return std::numeric_limits<double>::quiet_NaN();
 	}
 	return res;
+}
+
+std::map<std::string, double> CCalculator::GetAllFunctions() const
+{
+	std::map <std::string, double> functions;
+	for (auto& operand : m_operands)
+	{
+		if (operand->GetType() == COperand::OperandType::FunctionExpression ||
+			operand->GetType() == COperand::OperandType::FunctionIdentifier)
+		{
+			std::string functionName = operand->GetIdentifier();
+			double res = 0;
+			functions[operand->GetIdentifier()] = Calculate(functionName, res);
+		}
+	}
+	return functions;
 }
