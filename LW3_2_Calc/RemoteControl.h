@@ -23,11 +23,15 @@ private:
 	bool PrintVariables(std::istream& args);
 	bool DeclareFunction(std::istream& args);
 	bool PrintFunctions(std::istream& args);
+	
 private:
 	using Handler = std::function<bool(std::istream& args)>;
 	using ActionMap = std::map<std::string, Handler>;
 	std::ostream& SetOutput(std::ostream& output);
 	std::optional<RemoteControl::Expression> RetrievePartsOfExpression(const std::string& input);
+	std::string GetErrorDescription() const;
+	static std::string RemoveAllSpaces(std::string str);
+
 	CCalculator& m_calculator;
 	std::istream& m_input;
 	std::ostream& m_output;

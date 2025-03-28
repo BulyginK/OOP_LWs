@@ -166,7 +166,7 @@ void CCalculator::SetErrorDescription(const ErrorDescription& errorDescription)
 	m_errorDescription = errorDescription;
 }
 
-std::string CCalculator::RemoveAllSpaces(std::string str) //стандартный способ удаления элементов по условию в C++
+std::string CCalculator::RemoveAllSpaces(std::string str)
 {
 	str.erase(std::remove_if(str.begin(), str.end(),
 		[](unsigned char c) { return std::isspace(c); }),
@@ -259,7 +259,7 @@ double CCalculator::Calculate(const std::string& identifier, double& res) const
 	{
 		if (operand->GetIdentifier() == identifier && operand->GetType() == COperand::OperandType::Variable)
 		{
-			CVariable& variable = static_cast<CVariable&>(*operand);  // *operand используется для разыменования умного указателя
+			CVariable& variable = static_cast<CVariable&>(*operand);
 			res = variable.GetValue();
 			break;
 		}

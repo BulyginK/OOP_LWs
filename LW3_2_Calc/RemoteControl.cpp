@@ -56,7 +56,7 @@ bool RemoteControl::DeclareVariable(std::istream& args)
 		}
 		else
 		{
-			//m_output << m_calculator.GetErrorDescription() << "\n";
+			m_output << GetErrorDescription() << "\n";
 		}
 	}
 	return false;
@@ -65,7 +65,9 @@ bool RemoteControl::DeclareVariable(std::istream& args)
 bool RemoteControl::SetVariableValue(std::istream& args)
 {
 	std::string input;
-	if (args >> input)
+	std::getline(args, input);
+	input = RemoveAllSpaces(input);
+	if (!input.empty())
 	{
 		auto expr = RetrievePartsOfExpression(input);
 		if (expr)
@@ -78,7 +80,7 @@ bool RemoteControl::SetVariableValue(std::istream& args)
 			}
 			else
 			{
-				//m_output << m_calculator.GetErrorDescription() << "\n";
+				m_output << GetErrorDescription() << "\n";
 			}
 		}
 	}
@@ -97,7 +99,7 @@ bool RemoteControl::PrintOperand(std::istream& args)
 	}
 	else
 	{
-		m_output << "Not declared\n";
+		m_output << GetErrorDescription() << "\n";
 		return false;
 	}
 }
@@ -105,7 +107,7 @@ bool RemoteControl::PrintOperand(std::istream& args)
 bool RemoteControl::PrintVariables(std::istream& args)
 {
 	std::map<std::string, double> vars = m_calculator.GetAllOperands();
-	for (auto var : vars)
+	for (auto& var : vars)
 	{
 		m_output << var.first << ":" << var.second << "\n";
 	}
@@ -129,15 +131,16 @@ std::optional<RemoteControl::Expression> RemoteControl::RetrievePartsOfExpressio
 			return expr;
 		}
 	}
-	m_output << "Incorrect expression\n";
+	m_output << GetErrorDescription() << "\n";
 	return std::nullopt;
 }
 
 bool RemoteControl::DeclareFunction(std::istream& args)
 {
 	std::string input;
-	// убирать все пробелы
-	if (args >> input)
+	std::getline(args, input);
+	input = RemoveAllSpaces(input);
+	if (!input.empty())
 	{
 		auto expr = RetrievePartsOfExpression(input);
 		if (expr)
@@ -150,7 +153,7 @@ bool RemoteControl::DeclareFunction(std::istream& args)
 			}
 			else
 			{
-				//m_output << m_calculator.GetErrorDescription() << "\n";
+				m_output << GetErrorDescription() << "\n";
 			}
 		}
 	}
@@ -160,9 +163,24 @@ bool RemoteControl::DeclareFunction(std::istream& args)
 bool RemoteControl::PrintFunctions(std::istream& args)
 {
 	std::map<std::string, double> vars = m_calculator.GetAllFunctions();  // расчитывает функции перед вывододм
-	for (auto var : vars)
+	for (auto& var : vars)
 	{
 		m_output << var.first << ":" << var.second << "\n";
 	}
 	return true;
+}
+
+std::string RemoteControl::GetErrorDescription() const
+{
+	auto error = m_calculator.GetErrorDescription();
+	auto it = ERROR_MESSAGES.find(error);
+	return (it != ERROR_MESSAGES.end()) ? it->second : "Unknown error";
+}
+
+std::string RemoteControl::RemoveAllSpaces(std::string str)
+{
+	str.erase(std::remove_if(str.begin(), str.end(),
+		[](unsigned char c) { return std::isspace(c); }),
+		str.end());
+	return str;
 }

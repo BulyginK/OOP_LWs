@@ -16,7 +16,17 @@ enum class ErrorDescription
 	NameNotExist,		// Если в команде используется необъявленная переменная
 	IncorrectIdentifier,
 	IncorrectExpression,
-	NoError			
+	NoError
+};
+
+const std::map<ErrorDescription, std::string> ERROR_MESSAGES = {
+	{ ErrorDescription::UnknownCommand, "Unknown command" },
+	{ ErrorDescription::InvalidUsage, "Invalid usage" },
+	{ ErrorDescription::DuplicateName, "Name already exists" },
+	{ ErrorDescription::NameNotExist, "Name does not exist" },
+	{ ErrorDescription::IncorrectIdentifier, "Incorrect identifier" },
+	{ ErrorDescription::IncorrectExpression, "Incorrect expression" },
+	{ ErrorDescription::NoError, "No error" }
 };
 
 class CCalculator
