@@ -19,16 +19,14 @@ public:
 
     OperandType COperand::GetType() const override;
     std::string GetIdentifier() const override;
-
-    //std::string GetOperand1() const;
-    //std::string GetOperand2() const;
-    //Sign GetSign() const;
-
+    Sign GetSign() const;
+    std::string GetOperand1() const;
+    std::string GetOperand2() const;
 
     static bool IsCorrectFunctionExpression(const std::string& exprNoSpaces);
 
 private:
-    const std::map<std::string, Sign> signes =
+    const std::map<std::string, Sign> m_signes =
     {
         {"+", Sign::Addition},
         {"-", Sign::Subtraction},

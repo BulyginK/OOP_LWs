@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(cannot_set_variable_with_empty_name)
 // Тест: нельзя установить переменную с уже существующим именем
 BOOST_AUTO_TEST_CASE(cannot_set_duplicate_variable)
 {
-    BOOST_CHECK(calc.DeclareVariable("existing_var"));
-    BOOST_CHECK(!calc.DeclareVariable("existing_var"));
+    BOOST_CHECK(calc.DeclareVariable("var"));
+    BOOST_CHECK(!calc.DeclareVariable("var"));
     BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::DuplicateName);
 }
 // Тест: можно установить несколько переменных с разными именами
@@ -140,20 +140,20 @@ BOOST_AUTO_TEST_CASE(parse_edge_cases)
 BOOST_AUTO_TEST_CASE(get_existing_operand)
 {
     CCalculator calc;
-    BOOST_CHECK(calc.DeclareVariable("test_var"));
-    auto operandRef = calc.GetOperandRef("test_var");
+    BOOST_CHECK(calc.DeclareVariable("var"));
+    auto operandRef = calc.GetOperandRef("var");
     BOOST_CHECK(operandRef.has_value());
     // Проверяем содержимое
     if (operandRef) {
         COperand& op = operandRef->get();
-        BOOST_CHECK(op.GetIdentifier() == "test_var");
+        BOOST_CHECK(op.GetIdentifier() == "var");
     }
 }
 // Поиск несуществующей переменной
 BOOST_AUTO_TEST_CASE(get_nonexistent_operand)
 {
     CCalculator calc;
-    auto operandRef = calc.GetOperandRef("ghost_var");
+    auto operandRef = calc.GetOperandRef("var");
     BOOST_CHECK(!operandRef.has_value());
     BOOST_CHECK(operandRef == std::nullopt);
 }
@@ -161,18 +161,18 @@ BOOST_AUTO_TEST_CASE(get_nonexistent_operand)
 BOOST_AUTO_TEST_CASE(declare_and_set_variable)
 {
     CCalculator calc;
-    BOOST_CHECK(calc.DeclareVariable("temp"));
-    BOOST_CHECK(calc.SetVariableValue("temp", "-273.15"));
+    BOOST_CHECK(calc.DeclareVariable("var"));
+    BOOST_CHECK(calc.SetVariableValue("var", "-273.15"));
     auto variables = calc.GetAllVariables();
-    BOOST_CHECK(variables.at("temp"), -273.15);
+    BOOST_CHECK(variables.at("var"), -273.15);
 }
 // Объявление переменной с присваиванием
 BOOST_AUTO_TEST_CASE(declare_variable_with_set_value)
 {
     CCalculator calc;
-    BOOST_CHECK(calc.SetVariableValue("temp", "-27.15"));
+    BOOST_CHECK(calc.SetVariableValue("var", "-27.15"));
     auto variables = calc.GetAllVariables();
-    BOOST_CHECK(variables.at("temp"), -27.15);
+    BOOST_CHECK(variables.at("var"), -27.15);
 }
 // Ошибка: некорректное значение ранее объявленного идентификатора
 BOOST_AUTO_TEST_CASE(set_right_variable_with_invalid_value)
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(set_variable_to_nonexistent_variable)
 {
     CCalculator calc;
     BOOST_CHECK(calc.DeclareVariable("y"));
-    BOOST_CHECK(!calc.SetVariableValue("y", "nonexistent"));
+    BOOST_CHECK(!calc.SetVariableValue("y", "var"));
     BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::IncorrectIdentifier);
 }
 // Успех: последовательное присваивание переменных
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(declare_function_with_valid_variable)
 BOOST_AUTO_TEST_CASE(declare_function_with_nonexistent_variable)
 {
     CCalculator calc;
-    BOOST_CHECK(!calc.DeclareFunction("f", "nonexistent_var"));
+    BOOST_CHECK(!calc.DeclareFunction("f", "var"));
     BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::NameNotExist);
 }
 // Ошибка: некорректный идентификатор функции
@@ -285,13 +285,22 @@ BOOST_AUTO_TEST_CASE(declare_function_with_correct_expression)
     CCalculator calc;
     BOOST_CHECK(calc.DeclareVariable("x"));
     BOOST_CHECK(calc.DeclareVariable("y"));
+    TestFunctionDeclaration(calc, "f1", "x+y");
+    TestFunctionDeclaration(calc, "f2", "  x+y");
+    TestFunctionDeclaration(calc, "f3", " x + y ");
+    TestFunctionDeclaration(calc, "f4", "x+ y");
+    TestFunctionDeclaration(calc, "f5", "x +y ");
+    TestFunctionDeclaration(calc, "f6", "x+y    ");
+}
+// Успех: корректное выражение функции через другую функцию
+BOOST_AUTO_TEST_CASE(declare_function_with_correct_expression_with_function)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.DeclareVariable("y"));
     BOOST_CHECK(calc.DeclareVariable("z"));
     TestFunctionDeclaration(calc, "f1", "x+y");
     TestFunctionDeclaration(calc, "f2", "f1-z");
-    TestFunctionDeclaration(calc, "f3", " x - y ");
-    TestFunctionDeclaration(calc, "f4", "x- z");
-    TestFunctionDeclaration(calc, "f5", "x +y ");
-    TestFunctionDeclaration(calc, "f6", "x*y    ");
 }
 // Ошибка: неверное выражение функции (недостающий операнд)
 BOOST_AUTO_TEST_CASE(declare_function_with_incomplete_expression)
@@ -344,6 +353,170 @@ BOOST_AUTO_TEST_CASE(redeclare_function_expression)
     BOOST_CHECK(!calc.DeclareFunction("f", "a-b")); // Повторное объявление
     BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::DuplicateName);
 }
-
+// Тест на успешный подсчет значения переменной
+BOOST_AUTO_TEST_CASE(count_value_of_existing_variable)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.SetVariableValue("x", "10.5"));
+    auto result = calc.CountValue("x");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(result.value(), 10.5);
+}
+// Тест на отсутствие значения у неинициализированной переменной
+BOOST_AUTO_TEST_CASE(count_value_of_uninitialized_variable)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    auto result = calc.CountValue("y");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(std::isnan(result.value())); // Проверка на NaN
+}
+// Тест на попытку подсчета несуществующего операнда
+BOOST_AUTO_TEST_CASE(count_value_of_nonexistent_operand)
+{
+    CCalculator calc;
+    auto result = calc.CountValue("x");
+    BOOST_CHECK(!result.has_value());
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::NameNotExist);
+}
+// Тест на корректность расчета через Calculate
+BOOST_AUTO_TEST_CASE(calculate_existing_variable_value)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("z"));
+    BOOST_CHECK(calc.SetVariableValue("z", "-3.14"));
+    double res = 0;
+    double calculated = calc.Calculate("z", res);
+    BOOST_CHECK(calculated, -3.14);
+}
+// Тест на расчет неинициализированной переменной
+BOOST_AUTO_TEST_CASE(calculate_uninitialized_variable)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("w"));
+    double res = 0;
+    double calculated = calc.Calculate("w", res);
+    BOOST_CHECK(std::isnan(calculated));
+}
+// Тест на расчет несуществующей переменной
+BOOST_AUTO_TEST_CASE(calculate_nonexistent_variable)
+{
+    CCalculator calc;
+    double res = 42.0;
+    double calculated = calc.Calculate("y", res);
+    BOOST_CHECK(calculated, 42.0);
+}
+// Тест на вычисление простой функции-идентификатора (ссылки на переменную)
+BOOST_AUTO_TEST_CASE(calculate_function_identifier_referencing_variable)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.SetVariableValue("x", "5.0"));
+    BOOST_CHECK(calc.DeclareFunction("ref", "x")); // fn ref = x
+    double result = 0;
+    double calculated = calc.Calculate("ref", result);
+    BOOST_CHECK(calculated, 5.0);
+}
+// Тест на вычисление цепочки функций-идентификаторов
+BOOST_AUTO_TEST_CASE(calculate_function_identifier_chain)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.SetVariableValue("x", "10.0"));
+    BOOST_CHECK(calc.DeclareFunction("f1", "x")); // fn ref1 = base
+    BOOST_CHECK(calc.DeclareFunction("f2", "f1")); // fn ref2 = ref1
+    double result = 0;
+    double calculated = calc.Calculate("f2", result);
+    BOOST_CHECK(calculated, 10.0);
+}
+// Тест на обработку неинициализированной переменной через функцию-идентификатор
+BOOST_AUTO_TEST_CASE(calculate_function_identifier_with_uninitialized_var)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("var"));
+    BOOST_CHECK(calc.DeclareFunction("f1", "var")); // fn f1 = var
+    double result = 0;
+    double calculated = calc.Calculate("f1", result);
+    BOOST_CHECK(std::isnan(calculated));
+}
+// Тест на сложение двух переменных
+BOOST_AUTO_TEST_CASE(calculate_addition_expression)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    BOOST_CHECK(calc.SetVariableValue("x", "2.5"));
+    BOOST_CHECK(calc.SetVariableValue("y", "3.5"));
+    BOOST_CHECK(calc.DeclareFunction("sum", "x+y"));
+    auto result = calc.CountValue("sum");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(result.value(), 6.0);
+}
+// Тест на вычитание
+BOOST_AUTO_TEST_CASE(calculate_subtraction_expression)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("a"));
+    BOOST_CHECK(calc.DeclareVariable("b"));
+    BOOST_CHECK(calc.SetVariableValue("a", "10.0"));
+    BOOST_CHECK(calc.SetVariableValue("b", "7.5"));
+    BOOST_CHECK(calc.DeclareFunction("sub", "a-b"));
+    auto result = calc.CountValue("sub");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(result.value(), 2.5);
+}
+// Тест на умножение
+BOOST_AUTO_TEST_CASE(calculate_multiplication_expression)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("m"));
+    BOOST_CHECK(calc.DeclareVariable("n"));
+    BOOST_CHECK(calc.SetVariableValue("m", "3.0"));
+    BOOST_CHECK(calc.SetVariableValue("n", "4.0"));
+    BOOST_CHECK(calc.DeclareFunction("mul", "m*n"));
+    auto result = calc.CountValue("mul");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(result.value(), 12.0);
+}
+// Тест на деление
+BOOST_AUTO_TEST_CASE(calculate_division_expression)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("p"));
+    BOOST_CHECK(calc.DeclareVariable("q"));
+    BOOST_CHECK(calc.SetVariableValue("p", "15.0"));
+    BOOST_CHECK(calc.SetVariableValue("q", "5.0"));
+    BOOST_CHECK(calc.DeclareFunction("div", "p/q"));
+    auto result = calc.CountValue("div");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(result.value(), 3.0);
+}
+// Тест на выражение с неинициализированными переменными
+BOOST_AUTO_TEST_CASE(calculate_expression_with_uninitialized_vars)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("u"));
+    BOOST_CHECK(calc.DeclareVariable("v"));
+    BOOST_CHECK(calc.DeclareFunction("sum", "u+v"));
+    auto result = calc.CountValue("sum");
+    BOOST_CHECK(result.has_value());
+    BOOST_CHECK(std::isnan(result.value()));
+}
+// Тест на сложную цепочку выражений
+BOOST_AUTO_TEST_CASE(calculate_nested_expressions)
+{
+    CCalculator calc;
+    BOOST_CHECK(calc.DeclareVariable("x"));
+    BOOST_CHECK(calc.DeclareVariable("y"));
+    BOOST_CHECK(calc.DeclareVariable("z"));
+    BOOST_CHECK(calc.SetVariableValue("x", "2.0"));
+    BOOST_CHECK(calc.SetVariableValue("y", "3.0"));
+    BOOST_CHECK(calc.SetVariableValue("z", "4.0"));
+    BOOST_CHECK(calc.DeclareFunction("sum", "x+y"));
+    BOOST_CHECK(calc.DeclareFunction("f1", "sum*z"));
+    auto result = calc.CountValue("f1");
+    BOOST_CHECK(result.value(), 20.0);
+}
 
 BOOST_AUTO_TEST_SUITE_END()

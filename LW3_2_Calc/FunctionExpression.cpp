@@ -12,7 +12,7 @@ CFunctionExpression::CFunctionExpression(std::string const& identifier, std::str
 CFunctionExpression::Sign CFunctionExpression::GetSign(std::string signStr)
 {
 	Sign s = Sign::Addition;
-	for (auto sign : signes)
+	for (auto sign : m_signes)
 	{
 		if (sign.first == signStr)
 		{
@@ -36,5 +36,20 @@ std::string CFunctionExpression::GetIdentifier() const
 COperand::OperandType CFunctionExpression::GetType() const
 {
     return OperandType::FunctionExpression;
+}
+
+CFunctionExpression::Sign CFunctionExpression::GetSign() const
+{
+	return m_sign;
+}
+
+std::string CFunctionExpression::GetOperand1() const
+{
+	return m_operand1;
+}
+
+std::string CFunctionExpression::GetOperand2() const
+{
+	return m_operand2;
 }
 

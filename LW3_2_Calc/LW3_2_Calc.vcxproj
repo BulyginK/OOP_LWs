@@ -202,6 +202,9 @@
     <ClInclude Include="Operand.h" />
     <ClInclude Include="Variable.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Calc_diagramUML.drawio" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

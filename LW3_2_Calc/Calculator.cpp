@@ -5,8 +5,6 @@
 #include <regex>
 #include <charconv>
 
-//CCalculator::CCalculator() {};
-
 // Идентификатор не должен совпадать ни с одним из ранее объявленных имен переменных и функций
 bool CCalculator::IsOperandDeclared(const std::string& identifier) const
 {
@@ -19,7 +17,6 @@ bool CCalculator::IsOperandDeclared(const std::string& identifier) const
 	}
 	return false;
 }
-
 
 bool CCalculator::ValidateIdentifier(const std::string& identifier)
 {
@@ -84,19 +81,6 @@ bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
 	}
 }
 
-//std::unique_ptr<COperand>& CCalculator::GetOperandRef(std::string identifier)
-//{
-//	for (auto& var : m_operands)
-//	{
-//		if (var->GetIdentifier() == identifier)
-//		{
-//			return var;
-//		}
-//	}
-//	static std::unique_ptr<COperand> notFound(nullptr);
-//	return notFound;
-//}
-
 std::optional<std::reference_wrapper<COperand>> CCalculator::GetOperandRef(const std::string& identifier) const  // reference_wrapper — это обёртка для ссылки
 {
 	for (auto& operand : m_operands)
@@ -109,15 +93,20 @@ std::optional<std::reference_wrapper<COperand>> CCalculator::GetOperandRef(const
 	return std::nullopt;
 }
 
+//Почему std::optional и std::nullopt ?
+//Явное указание на отсутствие значения :
+//В C++ нет аналога null для примитивных типов(например, double).
+//std::optional решает эту проблему, позволяя вернуть либо число, либо "ничего".
+
 std::optional<double> CCalculator::DetermineNewValueOfVariable(const std::string& newValue)
 {
 	double value = 0;
-	//const std::regex reg(R"(^-{0,1}\d+(\.\d+){0,1}$)");
 	const std::regex reg(R"(^-?\d+(?:\.\d+)?$)");
 	if (regex_match(newValue, reg)) //это число
 	{
 		const char* str = newValue.c_str();
-		auto [ptr, ec] = std::from_chars(str, str + newValue.size(), value);  // std::from_chars — функция из <charconv>, которая парсит строку в число без исключений 
+		auto [ptr, ec] = std::from_chars(str, str + newValue.size(), value);  
+		// std::from_chars — функция из <charconv>, которая парсит строку в число без исключений 
 		// ptr (const char*) — указатель на первый необработанный символ после числа
 		// ec (std::errc) — код ошибки (аналог errno)
 
@@ -154,8 +143,6 @@ std::optional<double> CCalculator::DetermineNewValueOfVariable(const std::string
 	}
 }
 
-
-
 std::map<std::string, double> CCalculator::GetAllVariables() const
 {
 	std::map <std::string, double> vars;
@@ -179,7 +166,7 @@ void CCalculator::SetErrorDescription(const ErrorDescription& errorDescription)
 	m_errorDescription = errorDescription;
 }
 
-std::string CCalculator::RemoveAllSpaces(std::string str)
+std::string CCalculator::RemoveAllSpaces(std::string str) //стандартный способ удаления элементов по условию в C++
 {
 	str.erase(std::remove_if(str.begin(), str.end(),
 		[](unsigned char c) { return std::isspace(c); }),
@@ -187,7 +174,36 @@ std::string CCalculator::RemoveAllSpaces(std::string str)
 	return str;
 }
 
-bool CCalculator::DeclareFunction(const std::string& identifier, std::string expression) // expression - выражение
+bool CCalculator::GetOperandFunctionExpression(const std::string& identifier, const std::string& exprNoSpaces)
+{
+	const std::regex reg(R"([-+*/])");
+	std::smatch match;
+	if (std::regex_search(exprNoSpaces, match, reg))
+	{
+		const std::string sign = match[0];
+
+		size_t signPos = exprNoSpaces.find(sign);
+		unsigned int exprLen = exprNoSpaces.length();
+		std::string operand1, operand2;
+		operand1.append(exprNoSpaces, 0, signPos);
+		operand2.append(exprNoSpaces, signPos + 1, exprLen - signPos - 1);
+		if (
+			COperand::IsCorrectIdentifier(operand1) &&
+			COperand::IsCorrectIdentifier(operand2) &&
+			IsOperandDeclared(operand1) &&
+			IsOperandDeclared(operand2)
+			)
+		{
+			m_operands.emplace_back(std::make_unique<CFunctionExpression>(identifier, operand1, operand2, sign));
+			return true;
+		}
+	}
+	return false;
+}
+
+// Объявляет новую функцию с ранее необъявленным именем <идентификатор1>
+// результат применения одной из следующих бинарных операций к значениям ранее объявленных идентификаторов <идентификатор2> и <идентификатор3> в момент вычисления значения функции
+bool CCalculator::DeclareFunction(const std::string& identifier, std::string expression)
 {
 	if (!ValidateIdentifier(identifier))
 	{
@@ -205,40 +221,82 @@ bool CCalculator::DeclareFunction(const std::string& identifier, std::string exp
 		return true;
 	}
 
-	std::string exprNoSpaces = RemoveAllSpaces(expression);
+	std::string exprNoSpaces = RemoveAllSpaces(expression); // Программа должна корректно распознавать операнды как в слитном виде, так и через пробел
 	if (CFunctionExpression::IsCorrectFunctionExpression(exprNoSpaces)) //fn <идентификатор1> = <идентификатор2><операция><идентификатор3>
 	{
-		//const std::regex reg("[+\\-*\\/]");
-		const std::regex reg(R"([-+*/])");
-		std::smatch match;
-		if (std::regex_search(exprNoSpaces, match, reg))
+		if (GetOperandFunctionExpression(identifier, exprNoSpaces))
 		{
-			const std::string sign = match[0];
-
-			size_t signPos = exprNoSpaces.find(sign);
-			if (signPos != std::string::npos)
-			{
-				std::string operand1, operand2;
-				unsigned int exprLen = exprNoSpaces.length();
-				operand1.append(exprNoSpaces, 0, signPos);
-				operand2.append(exprNoSpaces, signPos + 1, exprLen - signPos - 1);
-				if (
-					COperand::IsCorrectIdentifier(operand1) &&
-					COperand::IsCorrectIdentifier(operand2) &&
-					IsOperandDeclared(operand1) &&
-					IsOperandDeclared(operand2)
-					)
-				{
-					m_operands.emplace_back(std::make_unique<CFunctionExpression>(identifier, operand1, operand2, sign));
-					return true;
-				}
-			}
+			return true;
 		}
 
 	}
+	SetErrorDescription(ErrorDescription::IncorrectExpression);
+	return false;
+}
+
+std::optional<double> CCalculator::CountValue(const std::string& identifier)
+{
+	if (IsOperandDeclared(identifier))
+	{
+		double res = 0;
+		return Calculate(identifier, res);
+	}
 	else
 	{
-		SetErrorDescription(ErrorDescription::IncorrectExpression);
-		return false;
+		SetErrorDescription(ErrorDescription::NameNotExist);
+		return std::nullopt;
 	}
+}
+
+double CCalculator::Calculate(const std::string& identifier, double& res)
+{
+	if (std::isnan(res))
+	{
+		return std::numeric_limits<double>::quiet_NaN();
+	}
+
+	for (auto& operand : m_operands)
+	{
+		if (operand->GetIdentifier() == identifier && operand->GetType() == COperand::OperandType::Variable)
+		{
+			CVariable& variable = static_cast<CVariable&>(*operand);  // *operand используется для разыменования умного указателя
+			res = variable.GetValue();
+			break;
+		}
+		if (operand->GetIdentifier() == identifier && operand->GetType() == COperand::OperandType::FunctionIdentifier)
+		{
+			CFunctionIdentifier& funIdentifier = static_cast<CFunctionIdentifier&>(*operand);  
+			res = Calculate(funIdentifier.GetOperand(), res);
+			break;
+		}
+		if (operand->GetIdentifier() == identifier && operand->GetType() == COperand::OperandType::FunctionExpression)
+		{
+			CFunctionExpression& expr = static_cast<CFunctionExpression&>(*operand);
+			CFunctionExpression::Sign sign = expr.GetSign();
+			double res1 = 0;
+			res1 = Calculate(expr.GetOperand1(), res1);
+			double res2 = 0;
+			res2 = Calculate(expr.GetOperand2(), res2);
+			if (sign == CFunctionExpression::Sign::Addition)
+			{
+				res = res1 + res2;
+			}
+			if (sign == CFunctionExpression::Sign::Subtraction)
+			{
+				res = res1 - res2;
+			}
+			if (sign == CFunctionExpression::Sign::Multiplication)
+			{
+				res = res1 * res2;
+			}
+			if (sign == CFunctionExpression::Sign::Division)
+			{
+				res = res1 / res2;
+			}
+			break;
+		}
+		SetErrorDescription(ErrorDescription::InvalidUsage);
+		return std::numeric_limits<double>::quiet_NaN();
+	}
+	return res;
 }

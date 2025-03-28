@@ -51,4 +51,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Calc_diagramUML.drawio">
+      <Filter>Файлы заголовков</Filter>
+    </None>
+  </ItemGroup>
 </Project>
