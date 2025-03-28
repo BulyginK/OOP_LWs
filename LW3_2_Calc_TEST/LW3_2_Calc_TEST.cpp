@@ -22,6 +22,12 @@ void CheckInvalidDeclaration(CCalculator& calc, const std::string& varName)
     BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
 }
 
+void TestFunctionDeclaration(CCalculator& calc, const std::string& identifier, std::string expression)
+{
+    BOOST_CHECK(calc.DeclareFunction(identifier, expression));
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::NoError);
+}
+
 // Калькулятор
 BOOST_FIXTURE_TEST_SUITE(Calculator_, CalculatorFixture)
 // Тест: можно установить новую переменную с корректным именем
@@ -280,9 +286,12 @@ BOOST_AUTO_TEST_CASE(declare_function_with_correct_expression)
     BOOST_CHECK(calc.DeclareVariable("x"));
     BOOST_CHECK(calc.DeclareVariable("y"));
     BOOST_CHECK(calc.DeclareVariable("z"));
-    BOOST_CHECK(calc.DeclareFunction("f1", "x+y")); // Корректное выражение
-    BOOST_CHECK(calc.DeclareFunction("f2", "f1-z")); // Корректное выражение
-    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::NoError);
+    TestFunctionDeclaration(calc, "f1", "x+y");
+    TestFunctionDeclaration(calc, "f2", "f1-z");
+    TestFunctionDeclaration(calc, "f3", " x - y ");
+    TestFunctionDeclaration(calc, "f4", "x- z");
+    TestFunctionDeclaration(calc, "f5", "x +y ");
+    TestFunctionDeclaration(calc, "f6", "x*y    ");
 }
 // Ошибка: неверное выражение функции (недостающий операнд)
 BOOST_AUTO_TEST_CASE(declare_function_with_incomplete_expression)
@@ -290,14 +299,14 @@ BOOST_AUTO_TEST_CASE(declare_function_with_incomplete_expression)
     CCalculator calc;
     BOOST_CHECK(calc.DeclareVariable("a"));
     BOOST_CHECK(!calc.DeclareFunction("f1", "a+"));
-    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::IncorrectExpression);
 }
 // Ошибка: некорректные идентификаторы в выражении
 BOOST_AUTO_TEST_CASE(declare_function_with_invalid_operands)
 {
     CCalculator calc;
     BOOST_CHECK(!calc.DeclareFunction("f", "1x+2y")); // Некорректные имена
-    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
+    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::IncorrectExpression);
 }
 // Успех: корректная работа функции проверки вида операции
 BOOST_AUTO_TEST_CASE(declare_function_with_valid_expression_with_all_sign)

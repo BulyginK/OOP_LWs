@@ -1,6 +1,6 @@
 #include "Variable.h"
 
-CVariable::CVariable(std::string identifier, double value)
+CVariable::CVariable(std::string const& identifier, double const& value)
     : m_identifier(identifier)
     , m_value(value)
 {

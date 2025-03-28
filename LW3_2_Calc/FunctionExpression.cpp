@@ -1,7 +1,7 @@
 #include "FunctionExpression.h"
 #include <regex>
 
-CFunctionExpression::CFunctionExpression(const std::string& identifier, const std::string& operand1, const std::string& operand2, const std::string& signStr)
+CFunctionExpression::CFunctionExpression(std::string const& identifier, std::string const& operand1, std::string const& operand2, std::string const& signStr)
 	: m_identifier(identifier)
 	, m_operand1(operand1)
 	, m_operand2(operand2)
@@ -22,10 +22,10 @@ CFunctionExpression::Sign CFunctionExpression::GetSign(std::string signStr)
 	return s;
 }
 
-bool CFunctionExpression::IsCorrectFunctionExpression(const std::string& expression)
+bool CFunctionExpression::IsCorrectFunctionExpression(const std::string& exprNoSpaces)
 {
 	const std::regex reg(R"(^(?!_+$)[a-zA-Z_][_0-9a-zA-Z]*[-+*/]{1}(?!_+$)[a-zA-Z_][_0-9a-zA-Z]*$)");
-    return regex_match(expression, reg);
+    return regex_match(exprNoSpaces, reg);
 }
 
 std::string CFunctionExpression::GetIdentifier() const

@@ -15,17 +15,17 @@ public:
         Division
     };
 
-    CFunctionExpression(const std::string& identifier, const std::string& operand1, const std::string& operand2, const std::string& signStr);
+    CFunctionExpression(std::string const& identifier, std::string const& operand1, std::string const& operand2, std::string const& signStr);
 
     OperandType COperand::GetType() const override;
-
     std::string GetIdentifier() const override;
+
     //std::string GetOperand1() const;
     //std::string GetOperand2() const;
     //Sign GetSign() const;
 
 
-    static bool IsCorrectFunctionExpression(const std::string& expression);
+    static bool IsCorrectFunctionExpression(const std::string& exprNoSpaces);
 
 private:
     const std::map<std::string, Sign> signes =

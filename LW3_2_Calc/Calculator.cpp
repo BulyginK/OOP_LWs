@@ -179,7 +179,15 @@ void CCalculator::SetErrorDescription(const ErrorDescription& errorDescription)
 	m_errorDescription = errorDescription;
 }
 
-bool CCalculator::DeclareFunction(const std::string& identifier, const std::string& expression) // expression - выражение
+std::string CCalculator::RemoveAllSpaces(std::string str)
+{
+	str.erase(std::remove_if(str.begin(), str.end(),
+		[](unsigned char c) { return std::isspace(c); }),
+		str.end());
+	return str;
+}
+
+bool CCalculator::DeclareFunction(const std::string& identifier, std::string expression) // expression - выражение
 {
 	if (!ValidateIdentifier(identifier))
 	{
@@ -196,22 +204,24 @@ bool CCalculator::DeclareFunction(const std::string& identifier, const std::stri
 		m_operands.emplace_back(std::make_unique<CFunctionIdentifier>(identifier, expression));
 		return true;
 	}
-	else if (CFunctionExpression::IsCorrectFunctionExpression(expression)) //fn <идентификатор1> = <идентификатор2><операция><идентификатор3>
+
+	std::string exprNoSpaces = RemoveAllSpaces(expression);
+	if (CFunctionExpression::IsCorrectFunctionExpression(exprNoSpaces)) //fn <идентификатор1> = <идентификатор2><операция><идентификатор3>
 	{
 		//const std::regex reg("[+\\-*\\/]");
 		const std::regex reg(R"([-+*/])");
 		std::smatch match;
-		if (std::regex_search(expression, match, reg))
+		if (std::regex_search(exprNoSpaces, match, reg))
 		{
 			const std::string sign = match[0];
 
-			size_t signPos = expression.find(sign);
+			size_t signPos = exprNoSpaces.find(sign);
 			if (signPos != std::string::npos)
 			{
 				std::string operand1, operand2;
-				unsigned int exprLen = expression.length();
-				operand1.append(expression, 0, signPos);
-				operand2.append(expression, signPos + 1, exprLen - signPos - 1);
+				unsigned int exprLen = exprNoSpaces.length();
+				operand1.append(exprNoSpaces, 0, signPos);
+				operand2.append(exprNoSpaces, signPos + 1, exprLen - signPos - 1);
 				if (
 					COperand::IsCorrectIdentifier(operand1) &&
 					COperand::IsCorrectIdentifier(operand2) &&
@@ -228,7 +238,7 @@ bool CCalculator::DeclareFunction(const std::string& identifier, const std::stri
 	}
 	else
 	{
-		SetErrorDescription(ErrorDescription::InvalidUsage);
+		SetErrorDescription(ErrorDescription::IncorrectExpression);
 		return false;
 	}
 }

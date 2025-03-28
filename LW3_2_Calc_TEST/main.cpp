@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <boost/test/output/compiler_log_formatter.hpp>
+#include <boost/algorithm/string.hpp>
 
 class SpecLogFormatter
 	: public boost::unit_test::output::compiler_log_formatter

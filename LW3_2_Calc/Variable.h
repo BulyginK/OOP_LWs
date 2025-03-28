@@ -6,7 +6,7 @@ class CVariable final :
 {
 public:
 	// «начение переменной после ее объ€влени€ не определено (использовать значение nan дл€ этих целей)
-	CVariable(std::string identifier, double value = std::numeric_limits<double>::quiet_NaN()); //“ихий (quiet)
+	CVariable(std::string const& identifier, double const& value = std::numeric_limits<double>::quiet_NaN()); //“ихий (quiet)
 
 	OperandType COperand::GetType() const override;
 	std::string GetIdentifier() const override;

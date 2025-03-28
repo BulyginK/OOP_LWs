@@ -5,6 +5,8 @@
 #include <memory>
 #include <map>
 #include <optional>
+#include <algorithm> 
+#include <cctype>  
 
 enum class ErrorDescription
 {
@@ -14,6 +16,7 @@ enum class ErrorDescription
 	NameNotExist,		// Если в команде используется необъявленная переменная
 	NotNumberEntered,	// Если присваивается не число
 	IncorrectIdentifier,
+	IncorrectExpression,
 	NoError			
 };
 
@@ -24,7 +27,8 @@ static const std::map<std::string, ErrorDescription> ERROR_DESCRIPRTION
 	{ "Name already exists", ErrorDescription::DuplicateName },
 	{ "Name does not exist", ErrorDescription::NameNotExist },
 	{ "Not a number entered", ErrorDescription::NotNumberEntered},
-	{ "Incorrect identifier", ErrorDescription::IncorrectIdentifier }
+	{ "Incorrect identifier", ErrorDescription::IncorrectIdentifier },
+	{ "Incorrect expression", ErrorDescription::IncorrectExpression }
 };
 
 class CCalculator
@@ -33,7 +37,7 @@ public:
 	CCalculator() = default;
 
 	bool DeclareVariable(const std::string& identifier);
-	bool DeclareFunction(const std::string& identifier, const std::string& expression);
+	bool DeclareFunction(const std::string& identifier, std::string expression);
 
 	
 
@@ -45,21 +49,23 @@ public:
 
 	ErrorDescription GetErrorDescription() const;
 	void SetErrorDescription(const ErrorDescription& er);
-	//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
 	std::optional<std::reference_wrapper<COperand>> GetOperandRef(const std::string& identifier) const;
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 
 private:
 	bool ValidateIdentifier(const std::string& identifier);
-	// для тестов вынесены в public
-	//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
-	//std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
-	
-	//std::optional<std::unique_ptr<COperand>*> GetOperandRef(const std::string& identifier);
-	//std::optional<COperand*> GetOperandRef(const std::string& identifier) const;
-	
+	std::string RemoveAllSpaces(std::string str);
+
 
 	std::vector<std::unique_ptr<COperand>> m_operands;  // std::unique_ptr тк нужны гетерогенные объекты - полиморфизм через указатели
 	ErrorDescription m_errorDescription = ErrorDescription::NoError;
 };
 
+// для тестов вынесены в public
+//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
+//std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
+
+//std::optional<std::unique_ptr<COperand>*> GetOperandRef(const std::string& identifier);
+//std::optional<COperand*> GetOperandRef(const std::string& identifier) const;
+
+//std::unique_ptr<COperand>& GetOperandRef(std::string identifier);
