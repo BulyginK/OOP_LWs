@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(variable_is_set_to_nan)
 {
     BOOST_CHECK(calc.DeclareVariable("nan_var"));
     // Проверяем, что переменная объявлена и её значение — NaN
-    auto variables = calc.GetAllVariables();
+    auto variables = calc.GetAllOperands();
     BOOST_CHECK(variables.find("nan_var") != variables.end()); // Проверяем, что переменная существует
     BOOST_CHECK(std::isnan(variables.at("nan_var"))); // Проверяем, что значение — NaN
 }
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(set_variable_with_valid_number)
     BOOST_CHECK(calc.DeclareVariable("x"));
     BOOST_CHECK(calc.SetVariableValue("x", "42.5"));
 
-    auto variables = calc.GetAllVariables();
+    auto variables = calc.GetAllOperands();
     BOOST_CHECK(variables.find("x") != variables.end());
     BOOST_CHECK(variables.at("x"), 42.5);
 }
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(declare_and_set_variable)
     CCalculator calc;
     BOOST_CHECK(calc.DeclareVariable("var"));
     BOOST_CHECK(calc.SetVariableValue("var", "-273.15"));
-    auto variables = calc.GetAllVariables();
+    auto variables = calc.GetAllOperands();
     BOOST_CHECK(variables.at("var"), -273.15);
 }
 // Объявление переменной с присваиванием
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(declare_variable_with_set_value)
 {
     CCalculator calc;
     BOOST_CHECK(calc.SetVariableValue("var", "-27.15"));
-    auto variables = calc.GetAllVariables();
+    auto variables = calc.GetAllOperands();
     BOOST_CHECK(variables.at("var"), -27.15);
 }
 // Ошибка: некорректное значение ранее объявленного идентификатора
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(set_variable_to_another_variable_value)
     BOOST_CHECK(calc.SetVariableValue("x", "10"));
     BOOST_CHECK(calc.DeclareVariable("y"));
     BOOST_CHECK(calc.SetVariableValue("y", "x"));
-    auto variables = calc.GetAllVariables();
+    auto variables = calc.GetAllOperands();
     BOOST_CHECK(variables.at("y"), 10.0);
 }
 // Ошибка: попытка установить переменную в значение несуществующей переменной
@@ -211,25 +211,11 @@ BOOST_AUTO_TEST_CASE(chained_variable_assignment)
     BOOST_CHECK(calc.SetVariableValue("b", "a"));
     BOOST_CHECK(calc.DeclareVariable("c"));
     BOOST_CHECK(calc.SetVariableValue("c", "b"));
-    auto variables = calc.GetAllVariables();
+    auto variables = calc.GetAllOperands();
     BOOST_CHECK(variables.at("a"), 5.0);
     BOOST_CHECK(variables.at("b"), 5.0);
     BOOST_CHECK(variables.at("c"), 5.0);
 }
-
-// TODO
-// Ошибка: циклическое присваивание переменных - 
-//BOOST_AUTO_TEST_CASE(cyclic_variable_assignment)
-//{
-//    CCalculator calc;
-//    BOOST_CHECK(calc.DeclareVariable("x"));
-//    BOOST_CHECK(calc.DeclareVariable("y"));
-//    BOOST_CHECK(calc.SetVariableValue("x", "10"));
-//    BOOST_CHECK(calc.SetVariableValue("y", "x")); // допустимо
-//    BOOST_CHECK(!calc.SetVariableValue("x", "y")); // создает цикл
-//    BOOST_CHECK(calc.GetErrorDescription() == ErrorDescription::InvalidUsage);
-//}
-
 // Успех: объявление функции с существующей переменной
 BOOST_AUTO_TEST_CASE(declare_function_with_valid_variable)
 {

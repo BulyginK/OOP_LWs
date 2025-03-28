@@ -29,7 +29,7 @@ public:
 
 	bool IsOperandDeclared(const std::string& identifier) const;
 	bool SetVariableValue(std::string identifier, std::string newValue);
-	std::map<std::string, double> GetAllVariables() const;
+	std::map<std::string, double> GetAllOperands() const;
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);
 
 	ErrorDescription GetErrorDescription() const;

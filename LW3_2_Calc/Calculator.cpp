@@ -143,14 +143,14 @@ std::optional<double> CCalculator::DetermineNewValueOfVariable(const std::string
 	}
 }
 
-std::map<std::string, double> CCalculator::GetAllVariables() const
+std::map<std::string, double> CCalculator::GetAllOperands() const
 {
 	std::map <std::string, double> vars;
-	for (auto& var : m_operands)
+	for (auto& operand : m_operands)
 	{
-		if (var->GetType() == COperand::OperandType::Variable)
+		if (operand->GetType() == COperand::OperandType::Variable)
 		{
-			vars[var->GetIdentifier()] = static_cast<CVariable&>(*var).GetValue();
+			vars[operand->GetIdentifier()] = static_cast<CVariable&>(*operand).GetValue();
 		}
 	}
 	return vars;
