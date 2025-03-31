@@ -177,7 +177,7 @@ std::string RemoteControl::GetErrorDescription() const
 	return (it != ERROR_MESSAGES.end()) ? it->second : "Unknown error";
 }
 
-std::string RemoteControl::RemoveAllSpaces(std::string str)
+std::string RemoteControl::RemoveAllSpaces(std::string& str)
 {
 	str.erase(std::remove_if(str.begin(), str.end(),
 		[](unsigned char c) { return std::isspace(c); }),

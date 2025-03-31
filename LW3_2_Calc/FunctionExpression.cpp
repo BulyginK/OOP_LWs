@@ -9,7 +9,7 @@ CFunctionExpression::CFunctionExpression(std::string const& identifier, std::str
 {
 };
 
-CFunctionExpression::Sign CFunctionExpression::GetSign(std::string signStr)
+CFunctionExpression::Sign CFunctionExpression::GetSign(const std::string& signStr)
 {
 	Sign s = Sign::Addition;
 	for (auto sign : m_signes)

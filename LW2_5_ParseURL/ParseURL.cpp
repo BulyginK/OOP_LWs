@@ -61,10 +61,6 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 	std::regex regexStr(R"((http|https|ftp)://([0-9a-z\.-]+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
 	std::smatch result; // std::smatch, тип который представляет собой специализацию шаблонного класса std::match_results для строк типа std::string
 
-	// std::regex_match(url, result, regexStr1)
-	// url: 	Это строка, которую вы проверяете на соответствие регулярному выражению. - Тип: std::string или const char*
-	// result: Это объект типа std::smatch, который хранит результаты поиска
-
 	if (std::regex_match(url, result, regexStr))
 	{
 		if (!GetProtocol(result[1].str(), protocol)) {

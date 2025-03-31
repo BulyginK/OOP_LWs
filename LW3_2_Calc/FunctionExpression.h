@@ -33,7 +33,7 @@ private:
         {"*", Sign::Multiplication},
         {"/", Sign::Division}
     };
-    Sign GetSign(std::string signStr);
+    Sign GetSign(const std::string& signStr);
 
     std::string m_identifier;
     std::string m_operand1;

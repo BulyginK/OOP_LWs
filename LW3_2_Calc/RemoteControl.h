@@ -30,7 +30,7 @@ private:
 	std::ostream& SetOutput(std::ostream& output);
 	std::optional<RemoteControl::Expression> RetrievePartsOfExpression(const std::string& input);
 	std::string GetErrorDescription() const;
-	static std::string RemoveAllSpaces(std::string str);
+	static std::string RemoveAllSpaces(std::string& str);
 
 	CCalculator& m_calculator;
 	std::istream& m_input;

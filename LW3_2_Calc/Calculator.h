@@ -38,7 +38,7 @@ public:
 	bool DeclareFunction(const std::string& identifier, std::string expression);
 
 	bool IsOperandDeclared(const std::string& identifier) const;
-	bool SetVariableValue(std::string identifier, std::string newValue);
+	bool SetVariableValue(const std::string& identifier, const std::string& newValue);
 	std::map<std::string, double> GetAllOperands() const;
 	std::map<std::string, double> GetAllFunctions() const;
 	std::optional<double> DetermineNewValueOfVariable(const std::string& newValue);

@@ -50,7 +50,7 @@ bool CCalculator::DeclareVariable(const std::string& identifier)
 // Присваивает переменной с именем <идентификатор1> числовое значение, либо текущее значение ранее объявленного идентификатора с именем <идентификатор2>
 // Если переменная с именем <идентификатор1> не была ранее объявлена, происходит объявление новой переменной.
 // В качестве <идентификатора1> не может выступать имя функции.
-bool CCalculator::SetVariableValue(std::string identifier, std::string newValue)
+bool CCalculator::SetVariableValue(const std::string& identifier, const std::string& newValue)
 {
 	if (!COperand::IsCorrectIdentifier(identifier))
 	{
