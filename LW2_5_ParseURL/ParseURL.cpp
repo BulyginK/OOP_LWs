@@ -1,9 +1,15 @@
 #include "ParseURL.h"
 
+std::string ToLowLetters(const std::string& str)
+{
+	std::string strInLowLetters = str;
+	std::transform(strInLowLetters.begin(), strInLowLetters.end(), strInLowLetters.begin(), tolower);
+	return strInLowLetters;
+}
+
 bool GetProtocol(const std::string& str, Protocol& protocol)
 {
-	std::string lowerStr = str;
-	std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+	std::string lowerStr = ToLowLetters(str);
 
 	if (lowerStr == "http")
 	{
@@ -95,6 +101,7 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 
 		if (result[6].matched)
 		{
+
 			document = result[6].str();
 		}
 		// ≈сли данных нет, document остаетс€ пустой строкой
