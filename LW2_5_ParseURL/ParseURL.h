@@ -3,12 +3,12 @@
 
 namespace 
 {
-    constexpr int HTTP_PORT = 80;
-    constexpr int HTTPS_PORT = 443;
-    constexpr int FTP_PORT = 21;
+    constexpr int DEFAULT_HTTP_PORT = 80;
+    constexpr int DEFAULT_HTTPS_PORT = 443;
+    constexpr int DEFAULT_FTP_PORT = 21;
 
-    constexpr int MIN_PORT = 1;
-    constexpr int MAX_PORT = 65535;
+    constexpr int MIN_VALID_PORT = 1;
+    constexpr int MAX_VALID_PORT = 65535;
 }
 
 

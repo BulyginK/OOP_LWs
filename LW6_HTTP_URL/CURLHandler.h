@@ -1,5 +1,6 @@
 #pragma once
 #include <istream>
+#include "CHttpUrl.h"
 
 class CUrlHandler
 {
@@ -9,4 +10,6 @@ public:
 private:
 	std::istream& m_input;
 	std::ostream& m_output;
+
+	static std::string GetProtocol(const Protocol& protocol);
 }; 

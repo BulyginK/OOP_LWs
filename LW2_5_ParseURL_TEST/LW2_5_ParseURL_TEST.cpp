@@ -26,17 +26,17 @@ TEST_CASE("Parse URL function extracts the protocol host port document from URL"
 // Функция ParseURL если порт не указан, возвращает его в зависимости от протокола
 TEST_CASE("Parse URL function determines port by protocol if the port is not specified")
 {
-	ExpectCorrectURL("http://www.mysite.com/doc.txt", Protocol::HTTP, "www.mysite.com", HTTP_PORT, "doc.txt");
-	ExpectCorrectURL("ftp://www.mysite.com/doc.txt", Protocol::FTP, "www.mysite.com", FTP_PORT, "doc.txt");
-	ExpectCorrectURL("https://www.mysite.com/doc.txt", Protocol::HTTPS, "www.mysite.com", HTTPS_PORT, "doc.txt");
+	ExpectCorrectURL("http://www.mysite.com/doc.txt", Protocol::HTTP, "www.mysite.com", DEFAULT_HTTP_PORT, "doc.txt");
+	ExpectCorrectURL("ftp://www.mysite.com/doc.txt", Protocol::FTP, "www.mysite.com", DEFAULT_FTP_PORT, "doc.txt");
+	ExpectCorrectURL("https://www.mysite.com/doc.txt", Protocol::HTTPS, "www.mysite.com", DEFAULT_HTTPS_PORT, "doc.txt");
 }
 
 // Функция ParseURL игнорирует регистр символа протокола
 TEST_CASE("Parse URL function ignores the case of the protocol character")
 {
-	ExpectCorrectURL("HTTP://www.mysite.com/doc.txt", Protocol::HTTP, "www.mysite.com", HTTP_PORT, "doc.txt");
-	ExpectCorrectURL("FTP://www.mysite.com/doc.txt", Protocol::FTP, "www.mysite.com", FTP_PORT, "doc.txt");
-	ExpectCorrectURL("HTTPS://www.mysite.com/doc.txt", Protocol::HTTPS, "www.mysite.com", HTTPS_PORT, "doc.txt");
+	ExpectCorrectURL("HTTP://www.mysite.com/doc.txt", Protocol::HTTP, "www.mysite.com", DEFAULT_HTTP_PORT, "doc.txt");
+	ExpectCorrectURL("FTP://www.mysite.com/doc.txt", Protocol::FTP, "www.mysite.com", DEFAULT_FTP_PORT, "doc.txt");
+	ExpectCorrectURL("HTTPS://www.mysite.com/doc.txt", Protocol::HTTPS, "www.mysite.com", DEFAULT_HTTPS_PORT, "doc.txt");
 }
 
 // Минимальный и максимальный допустимые порты корректны
@@ -126,9 +126,9 @@ TEST_CASE("GetPort function tests")
 {
 	SECTION("Valid protocols")
 	{
-		CHECK(GetPort(Protocol::HTTP) == HTTP_PORT);
-		CHECK(GetPort(Protocol::HTTPS) == HTTPS_PORT);
-		CHECK(GetPort(Protocol::FTP) == FTP_PORT);
+		CHECK(GetPort(Protocol::HTTP) == DEFAULT_HTTP_PORT);
+		CHECK(GetPort(Protocol::HTTPS) == DEFAULT_HTTPS_PORT);
+		CHECK(GetPort(Protocol::FTP) == DEFAULT_FTP_PORT);
 	}
 
 	SECTION("Invalid protocol")
@@ -155,7 +155,7 @@ TEST_CASE("Invalid URL format")
 // Специальные символы в документе
 TEST_CASE("Special characters in the document")
 {
-	ExpectCorrectURL("http://www.mysite.com/path%20with%20spaces", Protocol::HTTP, "www.mysite.com", HTTP_PORT, "path%20with%20spaces");
-	ExpectCorrectURL("http://www.mysite.com/?query=param", Protocol::HTTP, "www.mysite.com", HTTP_PORT, "?query=param");
+	ExpectCorrectURL("http://www.mysite.com/path%20with%20spaces", Protocol::HTTP, "www.mysite.com", DEFAULT_HTTP_PORT, "path%20with%20spaces");
+	ExpectCorrectURL("http://www.mysite.com/?query=param", Protocol::HTTP, "www.mysite.com", DEFAULT_HTTP_PORT, "?query=param");
 }
 

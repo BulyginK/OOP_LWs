@@ -3,6 +3,8 @@
 #include <iostream>
 
 std::regex regexUrl(R"((http|https)://([0-9a-z\.-]+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
+std::regex domainReg(R"(([0-9a-z\.-]+))", std::regex::icase);
+std::regex documentReg(R"(([^\s]+))", std::regex::icase);
 
 CHttpUrl::CHttpUrl(std::string const& url)
 {
@@ -14,27 +16,62 @@ CHttpUrl::CHttpUrl(std::string const& url)
 		m_domain = ToLowLetters(domain);
 		m_port = GetPort(matches[4].str(), m_protocol);
 		std::string document = matches[6].str();
-		m_document = document.empty() ? "/" : ToLowLetters(document);
+		//m_document = document.empty() ? "/" : ToLowLetters(document);
+		m_document = "/" + ToLowLetters(document);
 	}
 	else
 	{
-		throw CUrlParsingError("invalid url"); // throw генерирует исключение и передаёт управление обработчику catch
-		// Управление переходит к ближайшему блоку catch, который может обработать это исключение.
-		// Без throw код просто создал бы объект, но не вызвал бы механизм обработки ошибок :
-		// без throw Бессмысленно: объект создаётся и тут же уничтожается
-		// Программа продолжит выполняться, как будто всё в порядке!
+		throw CUrlParsingError("Invalid URL");
+	}
+}
+
+CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Protocol protocol)
+	: m_protocol(protocol)
+{
+	if (std::regex_match(domain, domainReg) && std::regex_match(document, documentReg))
+	{
+		m_domain = ToLowLetters(domain);
+		m_document = ToLowLetters(document);
+		if (m_document[0] != '/')
+		{
+			m_document.insert(0, std::string("/"));
+		}
+		m_port = m_protocol == Protocol::HTTPS ? 443 : 80;
+	}
+	else
+	{
+		throw std::invalid_argument("invalid url parameters");
+	}
+}
+
+CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Protocol protocol, unsigned short port)
+	: m_protocol(protocol)
+{
+	if (std::regex_match(domain, domainReg) && std::regex_match(document, documentReg))
+	{
+		m_domain = ToLowLetters(domain);
+		m_document = ToLowLetters(document);
+		if (m_document[0] != '/')
+		{
+			m_document.insert(0, std::string("/"));
+		}
+		m_port = GetPort(std::to_string(port), m_protocol);
+	}
+	else
+	{
+		throw std::invalid_argument("invalid url parameters");
 	}
 }
 
 std::string CHttpUrl::GetURL()const
 {
-	std::string port = ((m_port == 443 && m_protocol == Protocol::HTTPS) || (m_port == 80 && m_protocol == Protocol::HTTP)) ? "" : (':' + std::to_string(m_port));
 	std::string protocol = m_protocol == Protocol::HTTPS ? "https://" : "http://";
-	std::string document = m_document.empty() ? "/" : ("/" + m_document);
+	std::string port = ((m_port == 443 && m_protocol == Protocol::HTTPS) || (m_port == 80 && m_protocol == Protocol::HTTP)) ? "" : (':' + std::to_string(m_port));
+	std::string document = m_document == "/" ? "" : m_document;
 	return protocol + m_domain + port + document;
 }
 
-unsigned short CHttpUrl::GetPort(const std::string& portStr, Protocol protocol)
+unsigned short CHttpUrl::GetPort(const std::string& portStr, const Protocol& protocol)
 {
 	if (portStr.empty())
 	{

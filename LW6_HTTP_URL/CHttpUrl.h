@@ -2,23 +2,11 @@
 #include <string>
 #include "CUrlParsingError.h"
 
-
-//namespace 
-//{
-//    constexpr unsigned short DEFAULT_HTTP_PORT = 80;
-//    constexpr unsigned short DEFAULT_HTTPS_PORT = 443;
-//
-//    constexpr unsigned short MIN_VALID_PORT = 1;
-//    constexpr unsigned short MAX_VALID_PORT = 65535;
-//}
-
-
 enum class Protocol
 {
     HTTP,
     HTTPS
 };
-
 
 class CHttpUrl
 {
@@ -32,21 +20,21 @@ public:
         std::invalid_argument
         ≈сли им€ документа не начинаетс€ с символа /, то добавл€ет / к имени документа
     */
-    //CHttpUrl(
-    //    std::string const& domain,
-    //    std::string const& document,
-    //    Protocol protocol = Protocol::HTTP);
+    CHttpUrl(
+        std::string const& domain,
+        std::string const& document,
+        Protocol protocol = Protocol::HTTP);
 
     /* инициализирует URL на основе переданных параметров.
         ѕри недопустимости входных параметров выбрасывает исключение
         std::invalid_argument
         ≈сли им€ документа не начинаетс€ с символа /, то добавл€ет / к имени документа
     */
-    //CHttpUrl(
-    //    std::string const& domain,
-    //    std::string const& document,
-    //    Protocol protocol,
-    //    unsigned short port);
+    CHttpUrl(
+        std::string const& domain,
+        std::string const& document,
+        Protocol protocol,
+        unsigned short port);
 
     // возвращает строковое представление URL-а. ѕорт, €вл€ющийс€ стандартным дл€
     // выбранного протокола (80 дл€ http и 443 дл€ https) в эту строку
@@ -66,7 +54,7 @@ private:
     static constexpr unsigned short MIN_VALID_PORT = 1;
     static constexpr unsigned short MAX_VALID_PORT = 65535;
 
-    unsigned short GetPort(const std::string& portStr, Protocol protocol);
+    unsigned short GetPort(const std::string& portStr, const Protocol& protocol);
     static std::string ToLowLetters(const std::string& str);
 
     std::string m_domain;

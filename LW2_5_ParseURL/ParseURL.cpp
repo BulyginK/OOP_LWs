@@ -33,37 +33,21 @@ int GetPort(const Protocol& protocol)
 {
 	if (protocol == Protocol::HTTP)
 	{
-		return HTTP_PORT;
+		return DEFAULT_HTTP_PORT;
 	}
 	if (protocol == Protocol::HTTPS)
 	{
-		return HTTPS_PORT;
+		return DEFAULT_HTTPS_PORT;
 	}
 	if (protocol == Protocol::FTP)
 	{
-		return FTP_PORT;
+		return DEFAULT_FTP_PORT;
 	}
 	return -1;
 }
 
 bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string& host, std::string& document)
 {
-	// R() - нет необходимости экранирования специальных символов
-	// () обозначают группу захвата
-	// [] обозначают класс символов
-	// ^ означает отрицание
-	// 
-	// \s — пробельным символам
-	//  К пробельным символам относятся :
-	//	Пробел().
-	//	Табуляция(\t).
-	//	Новая строка(\n).
-	//	Возврат каретки(\r).
-	//	Вертикальная табуляция(\v).
-	//	Перевод страницы(\f).
-	// 
-	//  * означает "ноль или более повторений предыдущего элемента".
-
 	std::regex regexStr(R"((http|https|ftp)://([0-9a-z\.-]+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
 	std::smatch result; // std::smatch, тип который представляет собой специализацию шаблонного класса std::match_results для строк типа std::string
 
@@ -78,13 +62,10 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 		{
 			try {
 				port = std::stoi(result[4].str());
-				if (port < MIN_PORT || port > MAX_PORT)
+				if (port < MIN_VALID_PORT || port > MAX_VALID_PORT)
 				{
 					return false;
 				}
-			}
-			catch (const std::invalid_argument&) {
-				return false;
 			}
 			catch (const std::out_of_range&) {
 				return false;
@@ -93,7 +74,7 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 		else
 		{
 			port = GetPort(protocol);
-			if (port < MIN_PORT || port > MAX_PORT)
+			if (port < MIN_VALID_PORT || port > MAX_VALID_PORT)
 			{
 				return false;
 			}
@@ -101,7 +82,6 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 
 		if (result[6].matched)
 		{
-
 			document = result[6].str();
 		}
 		// Если данных нет, document остается пустой строкой
@@ -110,3 +90,19 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 	}
 	return false;
 }
+
+// R() - нет необходимости экранирования специальных символов
+// () обозначают группу захвата
+// [] обозначают класс символов
+// ^ означает отрицание
+// 
+// \s — пробельным символам
+//  К пробельным символам относятся :
+//	Пробел().
+//	Табуляция(\t).
+//	Новая строка(\n).
+//	Возврат каретки(\r).
+//	Вертикальная табуляция(\v).
+//	Перевод страницы(\f).
+// 
+//  * означает "ноль или более повторений предыдущего элемента".
