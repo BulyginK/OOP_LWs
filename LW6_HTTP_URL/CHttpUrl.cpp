@@ -2,7 +2,8 @@
 #include <regex>
 #include <iostream>
 
-std::regex regexUrl(R"((http|https)://([0-9a-z\.-]+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
+std::regex regexUrl(R"((http|https)://([0-9a-z]+(?:[.-][0-9a-z]+)*(?:\.[0-9a-z]+)+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
+//std::regex regexUrl(R"((http|https)://([0-9a-z]+\.[a-z]{2,})(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
 std::regex domainReg(R"(([0-9a-z\.-]+))", std::regex::icase);
 std::regex documentReg(R"(([^\s]+))", std::regex::icase);
 
@@ -16,7 +17,6 @@ CHttpUrl::CHttpUrl(std::string const& url)
 		m_domain = ToLowLetters(domain);
 		m_port = GetPort(matches[4].str(), m_protocol);
 		std::string document = matches[6].str();
-		//m_document = document.empty() ? "/" : ToLowLetters(document);
 		m_document = "/" + ToLowLetters(document);
 	}
 	else

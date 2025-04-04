@@ -6,29 +6,29 @@
 #include "../LW6_HTTP_URL/CUrlParsingError.h"
 #include "../catch2/catch.hpp"
 
-// URL в нижнем регистре
-TEST_CASE("url in low letters")
+// Конструктор с 1 параметром (url)
+TEST_CASE("url constructor with 1 parameter")
 {
-	CHttpUrl url("http://testurl.ru:8025/image.png/");
-	CHECK(url.GetURL() == "http://testurl.ru:8025/image.png/");
-	CHECK(url.GetProtocol() == Protocol::HTTP);
-	CHECK(url.GetPort() == 8025);
-	CHECK(url.GetDomain() == "testurl.ru");
-	CHECK(url.GetDocument() == "/image.png/");
-}
-// URL в верхнем регистре
-TEST_CASE("full url in capital letters")
-{
-	CHttpUrl url("https://TESTURL.RU:8025/image.png/");
-	CHECK(url.GetURL() == "https://testurl.ru:8025/image.png/");
-	CHECK(url.GetProtocol() == Protocol::HTTPS);
-	CHECK(url.GetPort() == 8025);
-	CHECK(url.GetDomain() == "testurl.ru");
-	CHECK(url.GetDocument() == "/image.png/");
-}
-// URL без порта
-TEST_CASE("url without port")
-{
+	// URL в нижнем регистре
+	SECTION("url in low letters")
+	{
+		CHttpUrl url("http://testurl.ru:8025/image.png/");
+		CHECK(url.GetURL() == "http://testurl.ru:8025/image.png/");
+		CHECK(url.GetProtocol() == Protocol::HTTP);
+		CHECK(url.GetPort() == 8025);
+		CHECK(url.GetDomain() == "testurl.ru");
+		CHECK(url.GetDocument() == "/image.png/");
+	}
+	// URL в верхнем регистре
+ 	SECTION("full url in capital letters")
+	{
+		CHttpUrl url("https://TESTURL.RU:8025/image.png/");
+		CHECK(url.GetURL() == "https://testurl.ru:8025/image.png/");
+		CHECK(url.GetProtocol() == Protocol::HTTPS);
+		CHECK(url.GetPort() == 8025);
+		CHECK(url.GetDomain() == "testurl.ru");
+		CHECK(url.GetDocument() == "/image.png/");
+	}
 	// HTTP без порта
 	SECTION("url without port - http")
 	{
@@ -89,24 +89,47 @@ TEST_CASE("url without port")
 		CHECK(url.GetDomain() == "127.0.0.1");
 		CHECK(url.GetDocument() == "/image.png/");
 	}
-}
-// URL без документа
-TEST_CASE("url without document")
-{
-	CHttpUrl url("https://test.com:8025/");
-	CHECK(url.GetURL() == "https://test.com:8025");
-	CHECK(url.GetProtocol() == Protocol::HTTPS);
-	CHECK(url.GetPort() == 8025);
-	CHECK(url.GetDomain() == "test.com");
-	CHECK(url.GetDocument() == "/");
-}
-
-// Некорректные URL
-TEST_CASE("invalid url in capital letters")
-{
-	REQUIRE_THROWS_WITH(CHttpUrl("htt://invalirurl:8025/testdocument/"), "Invalid URL");	// Неверный протокол (htt://)
-	REQUIRE_THROWS_WITH(CHttpUrl("https:/invalirurl:8025/testdocument/"), "Invalid URL");	// Пропущен слэш (https:/)
-	REQUIRE_THROWS_WITH(CHttpUrl("https:invalirurl:8025/testdocument/"), "Invalid URL");	// Неверный формат (https:)
+	// Пустой документ
+	SECTION("Empty document") {
+		CHttpUrl url("http://example.com");
+		CHECK(url.GetDocument() == "/");
+		CHECK(url.GetURL() == "http://example.com");
+	}
+	// Только слеш
+	SECTION("Single slash document") {
+		CHttpUrl url("http://example.com/");
+		CHECK(url.GetDocument() == "/");
+		CHECK(url.GetURL() == "http://example.com");
+	}
+	// Только порт и слеш
+	SECTION("Port with single slash document")
+	{
+		CHttpUrl url("https://test.com:8025/");
+		CHECK(url.GetURL() == "https://test.com:8025");
+		CHECK(url.GetPort() == 8025);
+		CHECK(url.GetDocument() == "/");
+	}
+	// Множественные слеши
+	SECTION("Multiple slashes") {
+		CHttpUrl url("http://example.com///path//");
+		CHECK(url.GetDocument() == "///path//");
+	}
+	// Некорректные домены
+	SECTION("Invalid domains") {
+		REQUIRE_THROWS_WITH(CHttpUrl("http://-test.com"), "Invalid URL");
+		REQUIRE_THROWS_WITH(CHttpUrl("http://test-.com"), "Invalid URL");
+		REQUIRE_THROWS_WITH(CHttpUrl("http://test..com"), "Invalid URL");
+		REQUIRE_THROWS_WITH(CHttpUrl("http://test--com"), "Invalid URL");
+	}
+	// Некорректные URL
+	SECTION("invalid url in capital letters")
+	{
+		REQUIRE_THROWS_WITH(CHttpUrl("htt://invalidurl:8025/testdocument/"), "Invalid URL");	// Неверный протокол (htt://)
+		REQUIRE_THROWS_WITH(CHttpUrl("https:/invalidurl:8025/testdocument/"), "Invalid URL");	// Пропущен слэш (https:/)
+		REQUIRE_THROWS_WITH(CHttpUrl("https:invalidurl:8025/testdocument/"), "Invalid URL");	// Неверный формат (https:)
+		REQUIRE_THROWS_WITH(CHttpUrl("htt://invalid url"), "Invalid URL");						// Пробел в домене
+		REQUIRE_THROWS_WITH(CHttpUrl("htt://invalidurl:8025/test document/"), "Invalid URL");	// Пробел в докуменете
+	}
 }
 // Конструктор с 3 параметрами (домен, документ, протокол)
 TEST_CASE("url constructor with 3 parameters")
