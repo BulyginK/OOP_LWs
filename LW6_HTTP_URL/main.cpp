@@ -4,7 +4,6 @@
 int main()
 {
 	CUrlHandler urlHandler(std::cin, std::cout);
-	//while (!std::cin.eof() && !std::cin.fail())
 	while (std::cin)
 	{
 		if (!urlHandler.ParseAndExtractUrlDetails())

@@ -19,20 +19,15 @@ bool CUrlHandler::ParseAndExtractUrlDetails()
 	try
 	{
 		CHttpUrl url(line);
-		m_output << url.GetURL() << '\n';
-		m_output << "PROTOCOL: "	<< GetProtocol(url.GetProtocol()) << '\n';
-		m_output << "DOMAIN: "		<< url.GetDomain() << '\n';
-		m_output << "PORT: "		<< url.GetPort() << '\n';
-		m_output << "DOC: "			<< url.GetDocument() << '\n';
+		m_output <<	"URL:      " << url.GetURL() << '\n';
+		m_output << "PROTOCOL: " << url.GetProtocol(url.GetProtocol()) << '\n';
+		m_output << "DOMAIN:   " << url.GetDomain() << '\n';
+		m_output << "PORT:     " << url.GetPort() << '\n';
+		m_output << "DOC:      " << url.GetDocument() << '\n';
 	}
 	catch (CUrlParsingError const& exception)
 	{
 		m_output << exception.what() << '\n';
 	}
 	return true;
-}
-
-std::string CUrlHandler::GetProtocol(const Protocol& protocol)
-{
-	return (protocol == Protocol::HTTP ? "http" : "https");
 }

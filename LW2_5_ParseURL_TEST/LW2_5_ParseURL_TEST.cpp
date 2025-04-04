@@ -2,7 +2,6 @@
 #include "../catch2/catch.hpp"
 #include "../LW2_5_ParseURL/ParseURL.h"
 
-// Ожидаем успех команды
 void ExpectCorrectURL(const std::string& url, Protocol expectedProtocol, const std::string& expectedHost, int expectedPort, const std::string& exepectedDocument)
 {
 	std::string host, document;
@@ -18,9 +17,9 @@ void ExpectCorrectURL(const std::string& url, Protocol expectedProtocol, const s
 // Функция ParseURL извлекает протокол, хост, порт и документ из URL-а
 TEST_CASE("Parse URL function extracts the protocol host port document from URL")
 {
-	ExpectCorrectURL("http://hostname:87/doc.txt", Protocol::HTTP, "hostname", 87, "doc.txt");
-	ExpectCorrectURL("ftp://hostname:87/doc.txt", Protocol::FTP, "hostname", 87, "doc.txt");
-	ExpectCorrectURL("https://hostname:87/doc.txt", Protocol::HTTPS, "hostname", 87, "doc.txt");
+	ExpectCorrectURL("http://hostname.ru:87/doc.txt", Protocol::HTTP, "hostname.ru", 87, "doc.txt");
+	ExpectCorrectURL("ftp://hostname.ru:87/doc.txt", Protocol::FTP, "hostname.ru", 87, "doc.txt");
+	ExpectCorrectURL("https://hostname.ru:87/doc.txt", Protocol::HTTPS, "hostname.ru", 87, "doc.txt");
 }
 
 // Функция ParseURL если порт не указан, возвращает его в зависимости от протокола

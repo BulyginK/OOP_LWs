@@ -2,22 +2,23 @@
 #include <regex>
 #include <iostream>
 
-std::regex regexUrl(R"((http|https)://([0-9a-z]+(?:[.-][0-9a-z]+)*(?:\.[0-9a-z]+)+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
-//std::regex regexUrl(R"((http|https)://([0-9a-z]+\.[a-z]{2,})(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
-std::regex domainReg(R"(([0-9a-z\.-]+))", std::regex::icase);
-std::regex documentReg(R"(([^\s]+))", std::regex::icase);
+constexpr unsigned short DEFAULT_HTTP_PORT = 80;
+constexpr unsigned short DEFAULT_HTTPS_PORT = 443;
+constexpr unsigned short MIN_VALID_PORT = 1;
+constexpr unsigned short MAX_VALID_PORT = 65535;
 
-CHttpUrl::CHttpUrl(std::string const& url)
+std::regex regexUrl(R"((http|https)://([0-9a-z]+(?:[.-][0-9a-z]+)*(?:\.[0-9a-z]+)+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
+std::regex domainReg(R"(([0-9a-z\.-]+))", std::regex::icase);
+std::regex documentReg(R"(([^\s]*))", std::regex::icase);
+
+// не создавать parse url отдельно
+CHttpUrl::CHttpUrl(const std::string& url)
 {
 	std::smatch matches;
 	if (std::regex_match(url, matches, regexUrl))
 	{
-		m_protocol = matches[1].str() == "http" ? Protocol::HTTP : Protocol::HTTPS;
-		std::string domain = matches[2].str();
-		m_domain = ToLowLetters(domain);
-		m_port = GetPort(matches[4].str(), m_protocol);
-		std::string document = matches[6].str();
-		m_document = "/" + ToLowLetters(document);
+		Protocol protocol = matches[1].str() == "http" ? Protocol::HTTP : Protocol::HTTPS;
+		Initialize(matches[2].str(), matches[6].str(), protocol, matches[4].str());
 	}
 	else
 	{
@@ -25,53 +26,45 @@ CHttpUrl::CHttpUrl(std::string const& url)
 	}
 }
 
-CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Protocol protocol)
-	: m_protocol(protocol)
+CHttpUrl::CHttpUrl(const std::string& domain, const std::string& document, Protocol protocol)
+	: CHttpUrl(domain, document, protocol, (protocol == Protocol::HTTPS) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT)
 {
-	if (std::regex_match(domain, domainReg) && std::regex_match(document, documentReg))
-	{
-		m_domain = ToLowLetters(domain);
-		m_document = ToLowLetters(document);
-		if (m_document[0] != '/')
-		{
-			m_document.insert(0, std::string("/"));
-		}
-		m_port = m_protocol == Protocol::HTTPS ? 443 : 80;
-	}
-	else
-	{
-		throw std::invalid_argument("invalid url parameters");
-	}
 }
 
-CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Protocol protocol, unsigned short port)
-	: m_protocol(protocol)
+CHttpUrl::CHttpUrl(const std::string& domain, const std::string& document, Protocol protocol, unsigned short port)
 {
-	if (std::regex_match(domain, domainReg) && std::regex_match(document, documentReg))
+	Initialize(domain, document, protocol, std::to_string(port));
+}
+
+void CHttpUrl::Initialize(const std::string& domain, const std::string& document, Protocol protocol, const std::string& portStr)
+{
+	if (!std::regex_match(domain, domainReg) || !std::regex_match(document, documentReg))
 	{
-		m_domain = ToLowLetters(domain);
-		m_document = ToLowLetters(document);
-		if (m_document[0] != '/')
-		{
-			m_document.insert(0, std::string("/"));
-		}
-		m_port = GetPort(std::to_string(port), m_protocol);
+		throw std::invalid_argument("Invalid URL parameters");
 	}
-	else
+
+	m_protocol = protocol;
+	m_domain = ToLowLetters(domain);
+
+	m_document = ToLowLetters(document);
+
+	if (m_document[0] != '/')
 	{
-		throw std::invalid_argument("invalid url parameters");
+		m_document.insert(0, "/");
 	}
+
+	m_port = GetPort(portStr, protocol);
 }
 
 std::string CHttpUrl::GetURL()const
 {
 	std::string protocol = m_protocol == Protocol::HTTPS ? "https://" : "http://";
-	std::string port = ((m_port == 443 && m_protocol == Protocol::HTTPS) || (m_port == 80 && m_protocol == Protocol::HTTP)) ? "" : (':' + std::to_string(m_port));
+	std::string port = ((m_port == DEFAULT_HTTPS_PORT && m_protocol == Protocol::HTTPS) || (m_port == DEFAULT_HTTP_PORT && m_protocol == Protocol::HTTP)) ? "" : (':' + std::to_string(m_port));
 	std::string document = m_document == "/" ? "" : m_document;
 	return protocol + m_domain + port + document;
 }
 
-unsigned short CHttpUrl::GetPort(const std::string& portStr, const Protocol& protocol)
+unsigned short CHttpUrl::GetPort(const std::string& portStr, const Protocol protocol)
 {
 	if (portStr.empty())
 	{
@@ -113,7 +106,12 @@ unsigned short CHttpUrl::GetPort() const
 	return m_port;
 }
 
-std::string CHttpUrl::ToLowLetters(const std::string& str)
+std::string CHttpUrl::GetProtocol(const Protocol protocol)
+{
+	return (protocol == Protocol::HTTP ? "http" : "https");
+}
+
+std::string ToLowLetters(const std::string& str)
 {
 	std::string strInLowLetters = str;
 	std::transform(strInLowLetters.begin(), strInLowLetters.end(), strInLowLetters.begin(), tolower);

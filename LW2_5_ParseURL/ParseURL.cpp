@@ -48,7 +48,8 @@ int GetPort(const Protocol& protocol)
 
 bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string& host, std::string& document)
 {
-	std::regex regexStr(R"((http|https|ftp)://([0-9a-z\.-]+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
+	std::regex regexStr(R"((http|https|ftp)://([0-9a-z]+(?:[.-][0-9a-z]+)*(?:\.[0-9a-z]+)+)(:([0-9]+))?(/([^\s]+)?)?)", std::regex::icase);
+
 	std::smatch result; // std::smatch, тип который представляет собой специализацию шаблонного класса std::match_results для строк типа std::string
 
 	if (std::regex_match(url, result, regexStr))
@@ -57,7 +58,6 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 			return false;
 		}
 		host = result[2].str();
-		// Извлечение и проверка порта
 		if (result[4].matched)
 		{
 			try {
@@ -90,19 +90,3 @@ bool ParseURL(std::string const& url, Protocol& protocol, int& port, std::string
 	}
 	return false;
 }
-
-// R() - нет необходимости экранирования специальных символов
-// () обозначают группу захвата
-// [] обозначают класс символов
-// ^ означает отрицание
-// 
-// \s — пробельным символам
-//  К пробельным символам относятся :
-//	Пробел().
-//	Табуляция(\t).
-//	Новая строка(\n).
-//	Возврат каретки(\r).
-//	Вертикальная табуляция(\v).
-//	Перевод страницы(\f).
-// 
-//  * означает "ноль или более повторений предыдущего элемента".
