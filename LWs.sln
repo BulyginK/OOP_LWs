@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW6_HTTP_URL_TEST", "LW6_HT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW4_DrawShapes", "LW4_DrawShapes\LW4_DrawShapes.vcxproj", "{394C3857-F4E2-424F-89D3-C85E47A6245D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LW4_DrawShapes_GDI", "LW4_DrawShapes_GDI\LW4_DrawShapes_GDI.vcxproj", "{E0033334-3802-4836-93C9-032CA02224AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -167,6 +169,18 @@ Global
 		{394C3857-F4E2-424F-89D3-C85E47A6245D}.Release|x64.Build.0 = Release|x64
 		{394C3857-F4E2-424F-89D3-C85E47A6245D}.Release|x86.ActiveCfg = Release|Win32
 		{394C3857-F4E2-424F-89D3-C85E47A6245D}.Release|x86.Build.0 = Release|Win32
+		{E0033334-3802-4836-93C9-032CA02224AD}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Debug|ARM64.Build.0 = Debug|ARM64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Debug|x64.ActiveCfg = Debug|x64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Debug|x64.Build.0 = Debug|x64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Debug|x86.ActiveCfg = Debug|Win32
+		{E0033334-3802-4836-93C9-032CA02224AD}.Debug|x86.Build.0 = Debug|Win32
+		{E0033334-3802-4836-93C9-032CA02224AD}.Release|ARM64.ActiveCfg = Release|ARM64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Release|ARM64.Build.0 = Release|ARM64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Release|x64.ActiveCfg = Release|x64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Release|x64.Build.0 = Release|x64
+		{E0033334-3802-4836-93C9-032CA02224AD}.Release|x86.ActiveCfg = Release|Win32
+		{E0033334-3802-4836-93C9-032CA02224AD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,20 +1,56 @@
-﻿// LW4_DrawShapes.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <windows.h>
+#include "Canvas.h"
 
-#include <iostream>
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+    case WM_PAINT: {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
 
-int main()
-{
-    std::cout << "Hello World!\n";
+        // Создаём холст GDI и рисуем на нём
+        CCanvas canvas(hdc);
+        canvas.DrawLine({ 50, 50 }, { 200, 200 }, 0xFF0000);  // Красная линия
+        canvas.FillCircle({ 150, 150 }, 50, 0x00FF00);       // Зелёный круг
+
+        EndPaint(hwnd, &ps);
+        return 0;
+    }
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+    // Регистрация класса окна
+    const wchar_t CLASS_NAME[] = L"GDI Canvas Example";
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+
+    RegisterClass(&wc);
+
+    // Создание окна
+    HWND hwnd = CreateWindowEx(
+        0, CLASS_NAME, L"GDI Example",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+        nullptr, nullptr, hInstance, nullptr
+    );
+
+    if (hwnd == nullptr) return 0;
+
+    ShowWindow(hwnd, nCmdShow);
+
+    // Цикл сообщений
+    MSG msg = {};
+    while (GetMessage(&msg, nullptr, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    return 0;
+}
