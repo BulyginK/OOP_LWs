@@ -1,13 +1,6 @@
 #pragma once
 #include "IShape.h"
 
-//struct SPoint
-//{
-//public:
-//	double x;
-//	double y;
-//};
-
 class CShape
 	: virtual public IShape
 {

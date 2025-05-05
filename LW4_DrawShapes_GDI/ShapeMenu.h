@@ -13,12 +13,13 @@
 class CShapeMenu
 {
 public:
-	void ReadShape(std::string& commandLine); // по констатной ссылке - в функции использовать новую переменную
+	//void ReadShape(std::string& commandLine); // по констатной ссылке - в функции использовать новую переменную
+	void ReadShape(const std::string commandLine);
 	void PrintShapeMinPerimeter();
 	void PrintShapeMaxArea();
 	void PrintInfo() const;
 
-	void DrawAllShapes(ICanvas& canvas) const;
+	void DrawAllShapes(ICanvas& canvas) const;  
 
 private:
 	using ShapesList = std::vector<std::shared_ptr<IShape>>;

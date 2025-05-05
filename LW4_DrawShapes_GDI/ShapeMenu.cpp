@@ -2,11 +2,13 @@
 #include <boost/algorithm/string.hpp>
 #include <unordered_map>
 
-void CShapeMenu::ReadShape(std::string& commandLine)
+//void CShapeMenu::ReadShape(std::string& commandLine) // по констатной ссылке - в функции использовать новую переменную
+void CShapeMenu::ReadShape(const std::string commandLine) 
 {
-	boost::to_lower(commandLine);
+	std::string command = commandLine;
+	boost::to_lower(command);
 	ParametersList parametersList;
-	boost::split(parametersList, commandLine, boost::is_any_of(" "));
+	boost::split(parametersList, command, boost::is_any_of(" "));
 	if (parametersList[0] == "triangle")
 	{
 		AddTriangle(parametersList);
@@ -241,7 +243,6 @@ void CShapeMenu::PrintInfo() const
 	}
 }
 
-// добавленные методы
 void CShapeMenu::DrawAllShapes(ICanvas& canvas) const {
 	for (const auto& shape : m_shapesList) {
 		shape->Draw(canvas);

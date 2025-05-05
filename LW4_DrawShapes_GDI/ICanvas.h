@@ -2,11 +2,6 @@
 #include <vector>
 #include <cstdint>
 
-//struct SPoint {
-//    double x;
-//    double y;
-//};
-
 struct SPoint
 {
 public:
