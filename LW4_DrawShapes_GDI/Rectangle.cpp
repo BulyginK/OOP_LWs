@@ -48,24 +48,20 @@ void CRectangle::AppendProperties(std::ostream& strm) const
 
 void CRectangle::Draw(ICanvas& canvas) const
 {
-    // Преобразуем цвета из строкового формата в uint32_t
     uint32_t outlineColor = std::stoul(GetOutlineColor(), nullptr, 16);
     uint32_t fillColor = std::stoul(GetFillColor(), nullptr, 16);
 
-    // Вычисляем координаты углов прямоугольника
     std::vector<SPoint> points = {
-        m_leftTop, // Левый верхний
-        {m_rightBottom.x, m_leftTop.y}, // Правый верхний
-        m_rightBottom, // Правый нижний
-        {m_leftTop.x, m_rightBottom.y}  // Левый нижний
+        m_leftTop,
+        {m_rightBottom.x, m_leftTop.y},
+        m_rightBottom,
+        {m_leftTop.x, m_rightBottom.y}
     };
 
-    // Рисуем залитый прямоугольник
     canvas.FillPolygon(points, fillColor);
 
-    // Рисуем контур прямоугольника (линиями)
-    canvas.DrawLine(points[0], points[1], outlineColor); // Верхняя грань
-    canvas.DrawLine(points[1], points[2], outlineColor); // Правая грань
-    canvas.DrawLine(points[2], points[3], outlineColor); // Нижняя грань
-    canvas.DrawLine(points[3], points[0], outlineColor); // Левая грань
+    canvas.DrawLine(points[0], points[1], outlineColor);
+    canvas.DrawLine(points[1], points[2], outlineColor);
+    canvas.DrawLine(points[2], points[3], outlineColor);
+    canvas.DrawLine(points[3], points[0], outlineColor);
 }

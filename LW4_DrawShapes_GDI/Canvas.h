@@ -2,7 +2,7 @@
 #include <windows.h> 
 #include "ICanvas.h"
 
-class CCanvas : public ICanvas {
+class CCanvas final : public ICanvas {
 public:
     explicit CCanvas(HDC hdc) : m_hdc(hdc) {}
 
@@ -16,4 +16,7 @@ public:
 
 private:
     HDC m_hdc;  // Контекст устройства (Device Context)
+
+    static COLORREF ColorFromUInt(uint32_t color);
+    static RECT GetCircleRect(SPoint center, double radius);
 };
