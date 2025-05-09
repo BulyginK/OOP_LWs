@@ -14,7 +14,7 @@ class CShapeMenu
 {
 public:
 	//void ReadShape(std::string& commandLine); // по констатной ссылке - в функции использовать новую переменную
-	void ReadShape(const std::string commandLine);
+	void ReadShape(const std::string& commandLine);
 	void PrintShapeMinPerimeter();
 	void PrintShapeMaxArea();
 	void PrintInfo() const;

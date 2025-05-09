@@ -40,11 +40,11 @@ void CCircle::Draw(ICanvas& canvas) const
 {
 	canvas.DrawCircle(m_center, m_radius, std::stoul(GetOutlineColor(), nullptr, 16));  // конвертируем строку в unsigned long
 	canvas.FillCircle(m_center, m_radius, std::stoul(GetFillColor(), nullptr, 16));
-	
-	// тк DrawCircle(SPoint center, double radius, uint32_t lineColor) принимает uint32_t lineColor, а у нас он хранится в string - приводим к типу uint32_t
-	// uint32_t — беззнаковое (unsigned) 32-битное целое число
-	// unsigned long stoul(const std::string& str, size_t* pos = 0, int base = 10);
-	// str — строка для преобразования,
-	// pos — указатель на переменную, куда запишется индекс первого непрочитанного символа(если передан nullptr, эта информация игнорируется),
-	// base — система счисления(2–36).В данном случае 16 (шестнадцатеричная).
 }
+
+// тк DrawCircle(SPoint center, double radius, uint32_t lineColor) принимает uint32_t lineColor, а у нас он хранится в string - приводим к типу uint32_t
+// uint32_t — беззнаковое (unsigned) 32-битное целое число
+// unsigned long stoul(const std::string& str, size_t* pos = 0, int base = 10);
+// str — строка для преобразования,
+// pos — указатель на переменную, куда запишется индекс первого непрочитанного символа(если передан nullptr, эта информация игнорируется),
+// base — система счисления(2–36).В данном случае 16 (шестнадцатеричная).

@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 //void CShapeMenu::ReadShape(std::string& commandLine) // по констатной ссылке - в функции использовать новую переменную
-void CShapeMenu::ReadShape(const std::string commandLine) 
+void CShapeMenu::ReadShape(const std::string& commandLine) 
 {
 	std::string command = commandLine;
 	boost::to_lower(command);

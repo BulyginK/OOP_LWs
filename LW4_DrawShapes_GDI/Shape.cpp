@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Shape.h"
 
 CShape::CShape(const std::string& outlineColor)

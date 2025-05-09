@@ -4,7 +4,6 @@
 
 struct SPoint
 {
-public:
     double x;
     double y;
 };
