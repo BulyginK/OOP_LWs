@@ -1,5 +1,4 @@
 #include "stdafx.h"
-//#include <boost/algorithm/string/replace.hpp>
 #include <boost/test/output/compiler_log_formatter.hpp>
 #include <boost/optional.hpp>
 
