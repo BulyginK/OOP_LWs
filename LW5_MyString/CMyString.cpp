@@ -1,12 +1,13 @@
 #include "CMyString.h"
 
-char CMyString::s_emptyString = '\0';
+char CMyString::m_emptyString = '\0';
 
 // pString объявлен как const char* (указатель на константные данные)
 CMyString::CMyString(const char* pString, size_t length, bool copyData) 
 	: m_length(length)
 	, m_capacity(length)
 {
+	// указать какие конструкторы при том или ином условии
 	if (m_length > 0 && copyData)
 	{
 		m_pString = new char[m_length + 1];
@@ -20,7 +21,7 @@ CMyString::CMyString(const char* pString, size_t length, bool copyData)
 	}
 	else
 	{
-		m_pString = &s_emptyString;
+		m_pString = &m_emptyString;
 		m_capacity = 0;
 	}
 }
@@ -40,15 +41,23 @@ CMyString::CMyString(const char* pString, size_t length)
 {
 }
 
+// В зависимости от контекста вызова, компилятор будет :
+// Копировать аргумент(если передаётся lvalue) - вызовет конструктор копирования.
+// Перемещать аргумент(если передаётся rvalue) - вызовет перемещающий конструктор.
+
+// конструктор копирования
 CMyString::CMyString(const CMyString& other)
 	: CMyString(other.m_pString, other.m_length, true)
 {
 }
 
+// перемещающий конструктор
+// CMyString&& other - cсылка на временный объект
+
 CMyString::CMyString(CMyString&& other) noexcept
 	: CMyString(other.m_pString, other.m_length, false)
 {
-	other.m_pString = &s_emptyString;
+	other.m_pString = &m_emptyString;
 	other.m_length = 0;
 	other.m_capacity = 0;
 }
@@ -63,7 +72,7 @@ CMyString::CMyString(std::string const& stlString)
 
 CMyString::~CMyString()
 {
-	if (m_pString != &s_emptyString) {
+	if (m_pString != &m_emptyString) {
 		delete[] m_pString;
 	}
 }
@@ -83,15 +92,12 @@ char const* CMyString::GetStringData() const
 	return m_pString;
 }
 
-bool operator==(const CMyString& lhs, const CMyString& rhs) {
-	return lhs.GetLength() == rhs.GetLength()
-		&& memcmp(lhs.GetStringData(), rhs.GetStringData(), lhs.GetLength() + 1) == 0;
-}
+
 
 // возвращает подстроку с заданной позиции длиной не больше length символов
 CMyString CMyString::SubString(size_t start, size_t length) const
 {
-	if (start >= m_length || m_pString == &s_emptyString)
+	if (start >= m_length || m_pString == &m_emptyString)
 	{
 		return CMyString();
 	}
@@ -106,15 +112,51 @@ CMyString CMyString::SubString(size_t start, size_t length) const
 
 void CMyString::Clear()
 {
-	if (m_pString != &s_emptyString)
+	if (m_pString != &m_emptyString)
 	{
 		delete[] m_pString;
 	}
-	m_pString = &s_emptyString;
+	m_pString = &m_emptyString;
 	m_length = 0;
 	m_capacity = 0;
 }
 
+void CMyString::Swap(CMyString& src) noexcept
+{
+	std::swap(m_pString, src.m_pString);
+	std::swap(m_length, src.m_length);
+	std::swap(m_capacity, src.m_capacity);
+};
+
+// Принимает параметр по значению (автоматически создаётся копия или перемещается временный объект).
+CMyString& CMyString::operator=(CMyString other) { 
+	Swap(other);
+	return *this;
+}
+
+bool operator==(const CMyString& lhs, const CMyString& rhs) {
+	return lhs.GetLength() == rhs.GetLength()
+		&& memcmp(lhs.GetStringData(), rhs.GetStringData(), lhs.GetLength() + 1) == 0;
+}
+
+CMyString operator+(const CMyString& lhs, const CMyString& rhs) 
+{
+	if (lhs.GetLength() == 0 && rhs.GetLength() == 0)
+	{
+		return CMyString();
+	}
+
+
+	size_t newLength = lhs.GetLength() + rhs.GetLength();
+
+	m_pString[m_length] = '\0';
+
+	return CMyString();
+}
+
+// Перегрузка операторов
+// habr.com/ru/articles/489666/
+// 
 // Начально разработанные конструторы
 /*
 CMyString::CMyString()

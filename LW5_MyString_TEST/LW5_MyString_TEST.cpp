@@ -233,3 +233,102 @@ TEST_CASE("Clear method tests")
 		CHECK(str.GetLength() == 0);
 	}
 }
+
+
+TEST_CASE("Operator =")
+{
+	SECTION("Non-empty string")
+	{
+		CMyString str1("SomeString");
+		CMyString str2("ElseStr");
+		str1 = str2;
+		CHECK(strcmp(str1.GetStringData(), "ElseStr") == 0);
+	}
+
+	//SECTION("Empty string")
+	//{
+	//	//CMyString s("SomeString");
+	//	std::string testStr;
+	//	CMyString s = testStr;
+	//	CHECK(strcmp(myStr.GetStringData(), "Temporary") == 0);
+	//}
+}
+
+// 
+TEST_CASE("Assignment operators")
+{
+	SECTION("Copy assignment")
+	{
+		CMyString a("Hello");
+		CMyString b;
+		b = a; // Копирующее присваивание
+		CHECK(strcmp(b.GetStringData(), "Hello") == 0);
+		CHECK(a.GetStringData() != b.GetStringData()); // Разные указатели
+	}
+
+	SECTION("Move assignment")
+	{
+		CMyString a("World");
+		const char* data = a.GetStringData();
+		CMyString b;
+		// std::move(a) преобразует a в rvalue (временный объект).
+		b = std::move(a); // Перемещающее присваивание
+		CHECK(strcmp(b.GetStringData(), "World") == 0);
+		CHECK(b.GetStringData() == data); // Тот же указатель
+		CHECK(a.GetLength() == 0); // a теперь пуст
+	}
+
+	SECTION("Self-assignment")
+	{
+		CMyString a("Test");
+		a = a; // Копирующее
+		CHECK(strcmp(a.GetStringData(), "Test") == 0);
+
+		a = std::move(a); // Перемещающее
+		CHECK(strcmp(a.GetStringData(), "Test") == 0);
+	}
+}
+
+TEST_CASE("operator =")
+{
+	SECTION("the value of variable is set to another variable - 1")
+	{
+		CMyString myStr1("Alloc\0ation", 11);
+		CMyString myStr2 = myStr1;
+		CHECK(myStr1 == myStr2);
+		CHECK(myStr2.GetLength() == 11);
+		CHECK(myStr2.GetStringData()[11] == '\0');
+	}
+	SECTION("empty string is set to another variable")
+	{
+		CMyString myStr1;
+		CMyString myStr2 = myStr1;
+		CHECK(myStr1 == myStr2);
+		CHECK(myStr2.GetLength() == 0);
+		CHECK(myStr2.GetStringData()[0] == '\0');
+	}
+	SECTION("the value of variable is set to another variable - 2")
+	{
+		CMyString myStr1("Week");
+		CMyString myStr2 = myStr1;
+		CHECK(myStr1 == myStr2);
+		CHECK(myStr2.GetLength() == 4);
+		CHECK(myStr2.GetStringData()[4] == '\0');
+	}
+	SECTION("the value of variable is set to another variable - 3")
+	{
+		std::string myStr1 = "day";
+		CMyString myStr2 = myStr1;
+		CHECK(myStr1 == myStr2);
+		CHECK(myStr2.GetLength() == 3);
+		CHECK(myStr2.GetStringData()[3] == '\0');
+	}
+	SECTION("the value of variable is set to itself")
+	{
+		CMyString myStr1 = "day";
+		myStr1 = myStr1;
+		CHECK(myStr1 == myStr1);
+		CHECK(myStr1.GetLength() == 3);
+		CHECK(myStr1.GetStringData()[3] == '\0');
+	}
+}

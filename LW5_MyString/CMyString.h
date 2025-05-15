@@ -45,13 +45,22 @@ public:
 
     // ¬озвращает вместимость строки
     size_t GetCapacity() const;
+
+    CMyString& operator=(CMyString other);
+
+    friend CMyString operator +(const CMyString& lhs, const CMyString& rhs);
+
+
 private:
     CMyString(const char* pString, size_t length, bool copyData);
+    
+    void Swap(CMyString& src) noexcept;
 
-    static char s_emptyString;
+    static char m_emptyString;
     char* m_pString; // m_pString имеет тип char* (неконстантный указатель).
     size_t m_length;
     size_t m_capacity;
 };
 
 bool operator ==(const CMyString& lhs, const CMyString& rhs);
+
